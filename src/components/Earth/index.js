@@ -1,7 +1,8 @@
 import React, {useState, useEffect, useRef, useCallback, useMemo, useLayoutEffect} from 'react';
+import earthNight from '../../assets/earth-night.jpg'
 import Globe from 'react-globe.gl'
 import * as d3 from 'd3'
-
+import './index.css'
 
 const TOP = 20;
 const colorArr = ['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf', '#9edae5'];
@@ -107,7 +108,7 @@ function Earth3D({locs,countries,width,height}) {
                 width={width}
                 height={height}
                 ref={globeEl}
-                globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
+                globeImageUrl={earthNight}
 
                 labelsData={countries}
                 labelLat={useCallback(d => d.lat,[])}
@@ -129,12 +130,17 @@ function Earth3D({locs,countries,width,height}) {
                 hexTopColor={useCallback(d => colorsCategory(d.points[0][colorKey]),[])}
                 hexSideColor={useCallback(d => colorsCategory(d.points[0][colorKey]),[])}
 
-                hexBinMerge={true}
-                hexLabel={useCallback(d => {return `
-            <b>${d.points.length}</b> stations:<ul><li>
-              ${d.points.slice().sort((a, b) => b.count - a.count).map(d => d.title).join('</li><li>')}
-            </li></ul>
-          `},[])}
+                hexBinMerge={false}
+                hexLabel={useCallback(d => {return `<div class="overlay-holder">
+            <div class="overlay-header">
+                <span><b>${d3.sum(d.points,s=>s.count)}</b> stations</span>
+            </div>
+            <div class="overlay-content">
+            <table>
+                <tbody><tr>${d.points.slice().sort((a, b) => b.count - a.count).map(d => `<td>[${d.count}]</td><td>${d.title}</td>`).join('</tr><tr>')}</tr></tbody>
+            </table>
+            </div>
+          </div>`},[])}
 
                 onGlobeClick={stopPlay}
             />

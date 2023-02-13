@@ -46,7 +46,7 @@ const LandingPage = () => {
                 </AutoSizer>
             </div>
         <Grid container sx={{height:'100%', position:'relative', pointerEvents:'none'}} direction={"column"} justifyContent="space-between">
-            <Grid  sx={{pointerEvents:'none'}}><Button color={'secondary'}>Zone 1</Button></Grid>
+            <Grid  sx={{pointerEvents:'none'}}><Button color={'secondary'}>Station Map</Button></Grid>
             <Grid container spacing={2} m={0} sx={{pointerEvents:'auto'}}>
                 <Grid item xs={8}>
                     <Card sx={{ minHeight: 275, backgroundColor:(theme)=> semicolor(theme.palette.background.paper)}}>

@@ -7,7 +7,7 @@ const LandingPage = lazy(() => import("../pages/LandingPage"))
 const routes = [
   {
     path: '/',
-    exact: true,
+    // exact: true,
     element: (
         <LandingPage/>
     ),

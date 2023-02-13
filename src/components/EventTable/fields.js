@@ -1,0 +1,33 @@
+export const fields = [
+    {
+        accessorKey: 'city',
+        header: 'City',
+    },
+    {
+        accessorKey: 'country',
+        header: 'Country',
+    },
+    {
+        accessorKey: 'station',
+        header: 'Station',
+    },
+    {
+        accessorKey: 'station_genre',
+        header: 'Station Genre',
+    },
+    {
+        accessorKey: 'stream_artist',
+        header: 'Artist',
+    },
+    {
+        accessorKey: 'stream_song',
+        header: 'Song',
+    },
+    {
+        accessorKey: 'time_station',
+        header: 'Time',
+        filterDisable:true
+    }
+];
+
+export const filterSearch = fields.filter(f=>!f.filterDisable);

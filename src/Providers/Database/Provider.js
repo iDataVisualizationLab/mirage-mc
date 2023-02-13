@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useReducer} from 'react'
 import Context from './Context'
 import {groups as d3groups, group as d3group, mean as d3mean, csv as d3csv} from "d3"
 import {uniq} from 'lodash';
+import axios from 'axios';
 import RG_stations_listed from "./data/Jan_24_2023/stations_listed.csv"
 import RG_locations_listed from "./data/Jan_24_2023/locations_listed.csv"
 import RG_metadata from "./data/Jan_24_2023/metadata.csv"
@@ -73,9 +74,8 @@ const init = {rawData: {value:{stationData:[],
 let isfirst = 0;
 const Provider = ({  children }) => {
     const [state, dispatch] = useReducer(reducer, init);
-
     useEffect(() => {
-        if (!isfirst) {
+        if ((!state.rawData.isLoading)&&(!state.rawData.value.metaData.length)) {
             isfirst = 1;
             try {
                 console.time('Load and process data');
@@ -115,8 +115,8 @@ const Provider = ({  children }) => {
                         d.country = locationDataMap[d['city_id']].country;
                         d.station = stationDataMap[d['station_id']].station;
                         d.stream_artist = streamDetail[d['stream_detail_id']].stream_artist;
-                        d.stream_title = streamDetail[d['stream_detail_id']].stream_title;
-                        // d.stream_song = streamDetail[d['stream_detail_id']].stream_song;
+                        // d.stream_title = streamDetail[d['stream_detail_id']].stream_title;
+                        d.stream_song = streamDetail[d['stream_detail_id']].stream_song;
                         // d.time_station = streamDetail[d['stream_detail_id']].time_station;
                     })
 

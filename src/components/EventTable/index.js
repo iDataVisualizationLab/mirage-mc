@@ -1,39 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import MaterialReactTable from 'material-react-table';
 import Scrollbar from "material-ui-shell/lib/components/Scrollbar";
+import {fields} from "./fields";
 const EventTable = ({data,onSelectRow}) => {
-    const columns = useMemo(
-        ()=>[
-            {
-                accessorKey: 'city',
-                header: 'City',
-            },
-            {
-                accessorKey: 'country',
-                header: 'Country',
-            },
-            {
-                accessorKey: 'station',
-                header: 'Station',
-            },
-            {
-                accessorKey: 'station_genre',
-                header: 'Station Genre',
-            },
-            {
-                accessorKey: 'stream_artist',
-                header: 'Artist',
-            },
-            {
-                accessorKey: 'stream_title',
-                header: 'Song',
-            },
-            {
-                accessorKey: 'time_station',
-                header: 'Time',
-            }
-        ],[]
-    );
+    const columns = fields;
 
     //optionally access the underlying virtualizer instance
     const rowVirtualizerInstanceRef = useRef(null);
