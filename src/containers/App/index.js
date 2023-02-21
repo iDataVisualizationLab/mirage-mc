@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react'
 import { HashRouter as BrowserRouter, Route, Routes } from 'react-router-dom'
 import ConfigProvider from 'base-shell/lib/providers/Config/Provider'
-
+import Database from '../DatabaseContainer/DatabaseContainer'
 const Layout = lazy(() => import('base-shell/lib/containers/Layout/Layout'))
 
 const App = ({ config: appConfig }) => {
@@ -14,6 +14,7 @@ const App = ({ config: appConfig }) => {
     return (
         <Suspense fallback={<Loading />}>
             <ConfigProvider appConfig={config}>
+            <Database>
                 <AppContainer>
                     <BrowserRouter>
                         <Routes>
@@ -31,6 +32,7 @@ const App = ({ config: appConfig }) => {
                         </Routes>
                     </BrowserRouter>
                 </AppContainer>
+            </Database>
             </ConfigProvider>
         </Suspense>
     )

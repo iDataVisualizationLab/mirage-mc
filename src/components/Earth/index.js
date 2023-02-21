@@ -1,24 +1,30 @@
-import React, {useState, useEffect, useRef, useCallback, useMemo, useLayoutEffect} from 'react';
+import React, {useState, useEffect, useRef, useCallback, useMemo, useLayoutEffect, forwardRef} from 'react';
 import earthNight from '../../assets/earth-night.jpg'
 import Globe from 'react-globe.gl'
 import * as d3 from 'd3'
 import './index.css'
+import {Card, CardContent, Portal, Stack, Typography} from "@mui/material";
+import DetailCard from "../DetailCard";
+import {semicolor} from "../../containers/LayoutContainer/theme";
+import Scrollbar from "material-ui-shell/lib/components/Scrollbar";
 
 const TOP = 20;
 const colorArr = ['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf', '#9edae5'];
 
 const arcThickScale = d3.scaleLinear().range([0.01,0.7]);
-const countriesScale = d3.scaleLinear().range([0.1,0.7]);
+const countriesScale = d3.scaleLinear().range([0.1,1]);
 
 
 
 
-function Earth3D({locs,countries,width,height}) {
+const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, legendHolderRef} , ref) => {
     const globeEl = useRef();
     const [colorKey, setColorKey] = useState('country');
     const [selectPoint, setSelectPoint] = useState();
     const [currentSequnce,setCurrentSequnce] = useState(0);
     const [MAP_CENTERs,setMAP_CENTERs] = useState([{ lat: -92.52824601944323, lng: 38.31079101844495, altitude: 1.8 },{ lat: 51.58421865, lng: 45.9571029, altitude: 1.8 },{ lat: 31.3037101, lng: -89.29276214, altitude: 1.8 },{ lat: 33.5842591, lng: -101.8804709, altitude: 1.8 }]);
+    const [ringData,setRingData] = useState([]);
+    const [contriesMap,setcontriesMap] = useState({});
 
     const colorsCategory = useMemo(()=>{
         return function(otherColor="#454545"){
@@ -39,10 +45,15 @@ function Earth3D({locs,countries,width,height}) {
     },[]);
 
     function handleData({locs,countries}) {
-        const range = d3.extent(locs, d => d.count);
+        const contriesMap = {};
+        const range = d3.extent(locs, d => d?.count);
+        
         arcThickScale.domain(range);
 
-        countriesScale.domain(d3.extent(countries, d => d.count));
+        countriesScale.domain(d3.extent(countries, d => {
+            contriesMap[d.title] = d;
+            return d?.count
+        }));
 
         //color
         colorsCategory.domain([]).range(colorArr);
@@ -56,13 +67,17 @@ function Earth3D({locs,countries,width,height}) {
             MAP_CENTERs[order].lat = countries[i].lat;
             MAP_CENTERs[order].lng = countries[i].long;
             order++
-        })
-        return {MAP_CENTERs};
+        });
+
+        
+        return {MAP_CENTERs,contriesMap};
     }
     useEffect(() => {
-        const {MAP_CENTERs} = handleData({locs,countries})
+        const {MAP_CENTERs,contriesMap} = handleData({locs,countries})
+        setcontriesMap(contriesMap)
         setMAP_CENTERs(MAP_CENTERs);
-        setCurrentSequnce(0);
+        if (!zoomLoc)
+            setCurrentSequnce(0);
     }, [locs,countries]);
 
     const [timer,setTimer] = useState(null);
@@ -87,13 +102,28 @@ function Earth3D({locs,countries,width,height}) {
         setCurrentSequnce(MAP_CENTERs.length);
     },[timer]);
 
+    const [timerRing,setTimerRing] = useState(null);
     const zoomTo = useCallback((lng,lat)=>{
         if (globeEl.current) {
             stopPlay();
-            globeEl.current.pointOfView({ lat, lng, altitude: 0.8 }, 2000);
+            globeEl.current.pointOfView({ lat, lng, altitude: 1.2 }, 2000);
+            setRingData([{lng,lat}]);
+            if (timerRing)
+                clearInterval(timerRing);
+            let interval = setTimeout(() => {
+                setRingData([])
+            }, 10000);
+            setTimerRing(interval);
         }
-    },[currentSequnce,stopPlay])
-
+    },[currentSequnce,stopPlay,timerRing])
+    useEffect(()=>{
+        if (zoomLoc)
+            zoomTo(zoomLoc.lng,zoomLoc.lat);
+        return () => {
+            if (timerRing)
+                clearInterval(timerRing);
+        };
+    },[zoomLoc])
     return  <div
         style={{
             background: "#000010",
@@ -110,13 +140,20 @@ function Earth3D({locs,countries,width,height}) {
                 ref={globeEl}
                 globeImageUrl={earthNight}
 
+                ringsData={ringData}
+                ringColor={()=>'#D39F49'}
+                ringResolution={1000}
+                ringMaxRadius={5}
+                ringPropagationSpeed={5}
+                ringRepeatPeriod={500}
+
                 labelsData={countries}
                 labelLat={useCallback(d => d.lat,[])}
                 labelLng={useCallback(d => d.long,[])}
                 labelAltitude={useCallback(d=>(selectPoint&&(selectPoint['title']===d['title']))?0.15:0.1,[selectPoint])}
                 labelText={useCallback(d => d['title'],[])}
-                // labelSize={d => (selectPoint&&(selectPoint===d))?0.8:arcThickScale(d.count)/3}
-                labelSize={useCallback(d => arcThickScale(d.count)/3,[])}
+                // labelSize={d => (selectPoint&&(selectPoint===d))?0.8:arcThickScale(d?.count)/3}
+                labelSize={useCallback(d => arcThickScale(d?.count)/3,[])}
                 labelDotRadius={0}
                 labelColor={useCallback(d => (selectPoint&&(selectPoint['title']===d['title']))?('#dd6700'):(d.color??'white'),[selectPoint])}
                 labelResolution={2}
@@ -133,19 +170,43 @@ function Earth3D({locs,countries,width,height}) {
                 hexBinMerge={false}
                 hexLabel={useCallback(d => {return `<div class="overlay-holder">
             <div class="overlay-header">
-                <span><b>${d3.sum(d.points,s=>s.count)}</b> stations</span>
+                <span><b>${d3.sum(d.points,s=>s?.count)}</b> stations</span>
             </div>
             <div class="overlay-content">
             <table>
-                <tbody><tr>${d.points.slice().sort((a, b) => b.count - a.count).map(d => `<td>[${d.count}]</td><td>${d.title}</td>`).join('</tr><tr>')}</tr></tbody>
+                <tbody><tr>${d.points.slice().sort((a, b) => b?.count - a?.count).map(d => `<td>[${d?.count}]</td><td>${d.title}</td>`).join('</tr><tr>')}</tr></tbody>
             </table>
             </div>
           </div>`},[])}
-
+                onHexClick={(d)=>{
+                    const city = [];
+                    d.points.forEach(d => {
+                        d.city.forEach(d=>city.push(d[0]))
+                    })
+                    onSelect({city,country:[d.points[0]?.country]});
+                }
+                }
                 onGlobeClick={stopPlay}
             />
         </div>
+        {legendHolderRef&&<Portal container={legendHolderRef.current}>
+            <Card sx={{pointerEvents:'all', overflowY:'auto', backgroundColor: (theme) => semicolor(theme.palette.background.paper)}}>
+                <Stack sx={{m:1,p:0}}>
+                    <Typography>Top #Stations by Countries</Typography>
+                    {colorsCategory.domain().map(d => <Typography key={d} variant={'subtitle2'} onClick={()=> {
+                        onSelect({country:[d]});
+                        if (contriesMap[d])
+                            zoomTo(contriesMap[d].long,contriesMap[d].lat);
+                    }}>
+                        <div style={{width:50*countriesScale(contriesMap[d]?.count),height:10, backgroundColor:colorsCategory(d), display:'inline-block', marginRight:5}}></div>{d}
+                    </Typography>)}
+                    <Typography variant={'subtitle2'} >
+                        <div style={{width:10,height:10, backgroundColor:colorsCategory('Other'), display:'inline-block', marginRight:5}}></div>---Other---
+                    </Typography>
+                </Stack>
+            </Card>
+        </Portal>}
     </div>;
-}
+})
 
 export default Earth3D;

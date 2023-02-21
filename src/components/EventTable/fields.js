@@ -26,6 +26,7 @@ export const fields = [
     {
         accessorKey: 'time_station',
         header: 'Time',
+        type:'time',
         filterDisable:true
     }
 ];

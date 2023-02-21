@@ -2,7 +2,15 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import MaterialReactTable from 'material-react-table';
 import Scrollbar from "material-ui-shell/lib/components/Scrollbar";
 import {fields} from "./fields";
-const EventTable = ({data,onSelectRow}) => {
+import {Box, Button} from "@mui/material";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { ExportToCsv } from 'export-to-csv';
+import {useDatabase} from "../../Providers/Database";
+
+
+
+
+const EventTable = ({data,onSelectRow,highlightId}) => {
     const columns = fields;
 
     //optionally access the underlying virtualizer instance
@@ -11,15 +19,47 @@ const EventTable = ({data,onSelectRow}) => {
     // const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [sorting, setSorting] = useState([]);
-
-    useEffect(() => {
-        console.log('I have been call!!!')
-    }, [data]);
+    const {getDownloadData} = useDatabase();
 
     useEffect(() => {
         //scroll to the top of the table when the sorting changes
         rowVirtualizerInstanceRef.current?.scrollToIndex(0);
     }, [sorting]);
+    const handleExportRows = (rows) => {
+        setIsLoading(true)
+        const datadownload = getDownloadData(rows.map((row) => row.original.stream_detail_id));
+        const csvOptions = {
+            fieldSeparator: ',',
+            quoteStrings: '"',
+            decimalSeparator: '.',
+            showLabels: true,
+            filename: `mirage-mc-${new Date().toDateString()}`,
+            useBom: true,
+            useKeysAsHeaders: true,
+            // headers: fields.map((c) => c.accessorKey),
+        };
+        const csvExporter = new ExportToCsv(csvOptions);
+        csvExporter.generateCsv(datadownload);
+        setIsLoading(false)
+    };
+    const handleExportData = () => {
+        setIsLoading(true)
+        // csvExporter.generateCsv(data);
+        const datadownload = getDownloadData();
+        const csvOptions = {
+            fieldSeparator: ',',
+            quoteStrings: '"',
+            decimalSeparator: '.',
+            showLabels: true,
+            filename: 'mirage-mc-all',
+            useBom: true,
+            useKeysAsHeaders: true,
+            // headers: fields.map((c) => c.accessorKey),
+        };
+        const csvExporter = new ExportToCsv(csvOptions);
+        csvExporter.generateCsv(datadownload);
+        setIsLoading(false)
+    };
 
     return (
         <MaterialReactTable
@@ -39,7 +79,7 @@ const EventTable = ({data,onSelectRow}) => {
             rowVirtualizerProps={{ overscan: 8 }} //optionally customize the virtualizer
             muiTableBodyRowProps={({ row }) => ({
                 onClick: ()=>{onSelectRow(row.original)},
-                sx: { cursor: 'pointer' },
+                sx: { cursor: 'pointer',opacity:highlightId?(highlightId.stream_detail_id=== row.original.stream_detail_id?1:0.7):1},
             })}
             enableColumnResizing
             defaultColumn={{
@@ -55,6 +95,54 @@ const EventTable = ({data,onSelectRow}) => {
             //         },
             //     },
             // }}
+            renderTopToolbarCustomActions={({ table }) => (
+                <Box
+                    sx={{ display: 'flex', gap: '1rem', p: '0.5rem', flexWrap: 'wrap' }}
+                >
+                    <Button
+                        color="primary"
+                        target={"_blank"}
+                        //export all data that is currently in the table (ignore pagination, sorting, filtering, etc.)
+                        // onClick={handleExportData}
+                        href={process.env.REACT_APP_DATA_DOWNLOAD}
+                        startIcon={<FileDownloadIcon />}
+                        variant="contained"
+                    >
+                        Download All Data
+                    </Button>
+                    <Button
+                        disabled={table.getPrePaginationRowModel().rows.length === 0}
+                        //export all rows, including from the next page, (still respects filtering and sorting)
+                        onClick={() =>
+                            handleExportRows(table.getPrePaginationRowModel().rows)
+                        }
+                        startIcon={<FileDownloadIcon />}
+                        variant="contained"
+                    >
+                        Export Current Data
+                    </Button>
+                    {/*<Button*/}
+                    {/*    disabled={table.getRowModel().rows.length === 0}*/}
+                    {/*    //export all rows as seen on the screen (respects pagination, sorting, filtering, etc.)*/}
+                    {/*    onClick={() => handleExportRows(table.getRowModel().rows)}*/}
+                    {/*    startIcon={<FileDownloadIcon />}*/}
+                    {/*    variant="contained"*/}
+                    {/*>*/}
+                    {/*    Export Page Rows*/}
+                    {/*</Button>*/}
+                    {/*<Button*/}
+                    {/*    disabled={*/}
+                    {/*        !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()*/}
+                    {/*    }*/}
+                    {/*    //only export selected rows*/}
+                    {/*    onClick={() => handleExportRows(table.getSelectedRowModel().rows)}*/}
+                    {/*    startIcon={<FileDownloadIcon />}*/}
+                    {/*    variant="contained"*/}
+                    {/*>*/}
+                    {/*    Export Selected Rows*/}
+                    {/*</Button>*/}
+                </Box>
+            )}
         />
     );
 };

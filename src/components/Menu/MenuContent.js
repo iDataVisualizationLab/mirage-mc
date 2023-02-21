@@ -59,7 +59,7 @@ const Menu = (props) => {
       }}
     >
       <Scrollbar style={{ flex: 1 }}>
-        <FilterPanel/>
+        {/*<FilterPanel/>*/}
         <SelectableMenuList
           key={isMiniSwitchVisibility + themeContext.isRTL}
           onIndexChange={handleChange}

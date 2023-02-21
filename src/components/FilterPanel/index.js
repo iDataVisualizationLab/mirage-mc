@@ -6,30 +6,60 @@ import {
     selectFilters
 } from "../../reducer/streamfilters";
 import { ActionCreators } from "redux-undo";
-import {Autocomplete, Stack, TextField} from "@mui/material";
+import {Autocomplete, createFilterOptions, Stack, TextField} from "@mui/material";
 import {filterSearch} from "../EventTable/fields";
+import {useDatabase} from "../../Providers/Database";
+import ListboxComponent from "../ListboxComponent";
 
-const defaultFilters = {Station:""}
+const OPTIONS_LIMIT = 50;
+const defaultFilterOptions = createFilterOptions();
+
+const filterOptionsFunc = (options, state) => {
+    return defaultFilterOptions(options, state).slice(0, OPTIONS_LIMIT);
+};
+
 export default function FilterPanel() {
     const filters = useSelector(selectFilters);
     const dispatch = useDispatch();
+    const [filterOptions,setFilterOptions] = useState({});
+    const {isLoading,getDistinctField} = useDatabase();
+    // useEffect(()=>{
+    //     if (!Object.keys(filters).length) {
+    //         // const newfilters = {};
+    //         // filterSearch.forEach(f=>{
+    //         //     newfilters[f.accessorKey] = null;
+    //         // })
+    //         // dispatch(setFilters({value: newfilters}));
+    //         ActionCreators.clearHistory();
+    //     }
+    // },[]);
     useEffect(()=>{
-        if (!Object.keys(filters).length) {
-            const newfilters = {};
+        if (!(isLoading('rawData')||isLoading('countries')))
+        {
+            console.log('here')
+            const newOptions = {};
             filterSearch.forEach(f=>{
-                newfilters[f.accessorKey] = null;
-            })
-            dispatch(setFilters({value: newfilters}))
+                newOptions[f.accessorKey] = getDistinctField(f.accessorKey);
+            });
+            setFilterOptions(newOptions);
         }
-    },[])
-    return <Stack>
+    },[isLoading('rawData'),isLoading('countries')])
+
+    return <Stack spacing={2} padding={2}>
         {filterSearch.map(f=><Autocomplete
+            key={f.accessorKey}
             multiple
-            options={[]}
-            getOptionLabel={(option) => option.title}
+            size="small"
+            limitTags={2}
+            filterOptions={filterOptionsFunc}
+            ListboxComponent={ListboxComponent}
+            options={filterOptions[f.accessorKey]??[]}
+            // getOptionLabel={(option) => option.title}
             value={filters[f.accessorKey]??[]}
             defaultValue={null}
-            filterSelectedOptions
+            onChange={(event, value) => {
+                dispatch(setFilter({key:f.accessorKey,value}));
+            }}
             renderInput={(params) => (
                 <TextField
                     {...params}

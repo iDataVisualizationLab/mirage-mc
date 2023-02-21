@@ -1,4 +1,5 @@
 import { createTheme } from '@mui/material/styles'
+import {color as d3color} from "d3";
 
 const getThemeSource = (id, ts, isDarkMode, isRTL) => {
     if (ts) {
@@ -22,4 +23,10 @@ const getThemeSource = (id, ts, isDarkMode, isRTL) => {
     })
 }
 
-export default getThemeSource
+export default getThemeSource;
+
+export function semicolor(_color){
+    const color = d3color(_color);
+    color.opacity = 0.5
+    return color.toString();
+}

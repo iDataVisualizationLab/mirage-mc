@@ -8,13 +8,6 @@ import RG_locations_listed from "./data/Jan_24_2023/locations_listed.csv"
 import RG_metadata from "./data/Jan_24_2023/metadata.csv"
 import RG_streamDetail from "./data/Jan_24_2023/streamDetail.csv"
 
-const APIKey = process.env.REACT_APP_DATA_API;
-const APIUrl = process.env.REACT_APP_DATA_URL;
-
-axios.defaults.headers.common = {
-    "api-key": APIKey,
-};
-
 function reducer(state, action) {
     const { type, path, isLoading=false,error = false,
         hasError = false, value } = action;
@@ -82,7 +75,6 @@ let isfirst = 0;
 const Provider = ({  children }) => {
     const [state, dispatch] = useReducer(reducer, init);
     useEffect(() => {
-        const controller = new AbortController();
         if ((!state.rawData.isLoading)&&(!state.rawData.value.metaData.length)) {
             isfirst = 1;
             try {
@@ -94,9 +86,7 @@ const Provider = ({  children }) => {
                 // load data
                 Promise.all([
                     d3csv(RG_stations_listed),
-                    axios.get(`${APIUrl}/location/`,{
-                        signal: controller.signal
-                    }).then(({data})=>data),
+                    d3csv(RG_locations_listed),
                     d3csv(RG_metadata),
                     d3csv(RG_streamDetail),
                 ]).then(([stationData, locationData, metaData, streamDetail]) => {
@@ -163,9 +153,6 @@ const Provider = ({  children }) => {
                     hasError: true,
                 });
             }
-        }
-        return ()=>{
-            controller.abort();
         }
     }, []);
 
