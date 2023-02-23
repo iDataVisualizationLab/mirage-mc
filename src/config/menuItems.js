@@ -27,7 +27,7 @@ import {
 
 import allLocales from './locales'
 import allThemes from './themes'
-import FilterPanel from "../components/FilterPanel";
+import FilterPanel from "../components/FilterPanel/index_static";
 
 const getMenuItems = (props) => {
   const {
@@ -38,6 +38,7 @@ const getMenuItems = (props) => {
     themeContext,
     a2HSContext,
     auth: authData,
+    openAbout,
   } = props
 
   const { toggleThis, isDesktop, isAuthMenuOpen, isMiniSwitchVisibility } =
@@ -110,10 +111,11 @@ const getMenuItems = (props) => {
       leftIcon: <HomeIcon />,
     },
     {
-      value: '/about',
+      value: null,
       visible: true,
       primaryText: intl.formatMessage({ id: 'about' }),
       leftIcon: <InfoOutlined />,
+      onClick:openAbout
     },
     { divider: true },
     {

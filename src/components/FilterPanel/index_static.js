@@ -18,14 +18,11 @@ const filterOptionsFunc = (options, state) => {
     return defaultFilterOptions(options, state).slice(0, OPTIONS_LIMIT);
 };
 
-const filterSearchAsyn = filterSearch.filter(f=>f.dynamic);
 export default function FilterPanel() {
     const filters = useSelector(selectFilters);
     const dispatch = useDispatch();
     const [filterOptions,setFilterOptions] = useState({});
-    const {isLoading,searchByStream,getList} = useDatabase();
-
-
+    const {isLoading,getDistinctField} = useDatabase();
     // useEffect(()=>{
     //     if (!Object.keys(filters).length) {
     //         // const newfilters = {};
@@ -36,31 +33,32 @@ export default function FilterPanel() {
     //         ActionCreators.clearHistory();
     //     }
     // },[]);
-    const fields = getList('fields');
-
     useEffect(()=>{
-        setFilterOptions({...fields});
-    },[fields])
+        if (!(isLoading('rawData')||isLoading('countries')))
+        {
+            const newOptions = {};
+            filterSearch.forEach(f=>{
+                newOptions[f.accessorKey] = getDistinctField(f.accessorKey);
+            });
+            setFilterOptions(newOptions);
+        }
+    },[isLoading('countries')])
 
     return <Stack spacing={2} padding={2}>
-        {filterSearch.map(f=><CusAutocomplete
+        {filterSearch.map(f=><Autocomplete
             key={f.accessorKey}
             multiple
             size="small"
             limitTags={2}
             filterOptions={filterOptionsFunc}
             ListboxComponent={ListboxComponent}
-            freeSolo
-            options={(f.dynamic?getList(`search-${f.accessorKey}`):filterOptions[f.accessorKey])??[]}
-            loading={f.dynamic?isLoading(`search-${f.accessorKey}`):false}
-            getOptionLabel={(d) => d}
+            options={filterOptions[f.accessorKey]??[]}
+            // getOptionLabel={(option) => option.title}
             value={filters[f.accessorKey]??[]}
+            defaultValue={null}
             onChange={(event, value) => {
                 dispatch(setFilter({key:f.accessorKey,value}));
             }}
-            onInputChange={f.dynamic?((event, newInputValue) => {
-                searchByStream(f.accessorKey,newInputValue);
-            }):undefined}
             renderInput={(params) => (
                 <TextField
                     {...params}
@@ -69,17 +67,4 @@ export default function FilterPanel() {
             )}
         />)}
     </Stack>
-}
-
-function CusAutocomplete ({onInputChange=()=>{},...props}) {
-    const [input, setInput] = React.useState('');
-    return <Autocomplete
-        inputValue={input}
-        onInputChange={(event,newValue,reason)=> {
-            setInput(newValue);
-            onInputChange(event,newValue,reason)
-        }}
-        onBlur={()=>{setInput('')}}
-        {...props}
-    />
 }

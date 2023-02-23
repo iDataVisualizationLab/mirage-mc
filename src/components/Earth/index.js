@@ -181,7 +181,8 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
                 onHexClick={(d)=>{
                     const city = [];
                     d.points.forEach(d => {
-                        d.city.forEach(d=>city.push(d[0]))
+                        debugger
+                        city.push(d.city)
                     })
                     onSelect({city,country:[d.points[0]?.country]});
                 }

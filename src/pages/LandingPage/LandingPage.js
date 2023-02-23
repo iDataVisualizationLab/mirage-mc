@@ -26,10 +26,13 @@ import {
     selectFilters
 } from "../../reducer/streamfilters";
 import {semicolor} from "../../containers/LayoutContainer/theme";
+import {useQuestions} from "material-ui-shell/lib/providers/Dialogs/Question";
+import {SET_MENU} from "../../reducer/actions/setting";
 
 const LandingPage = () => {
     const dispatch = useDispatch();
     const intl = useIntl();
+    const {openDialog,closeDialog, setProcessing} = useQuestions()
     const filters = useSelector(selectFilters);
     // const { appConfig } = useConfig()
     const {getList,isLoading,getEvents,requestEvents,getDetail} = useDatabase();
@@ -44,6 +47,7 @@ const LandingPage = () => {
                 setZoomLoc({lng:position.coords.longitude,lat:position.coords.latitude})
             }, ()=>{});
         }
+        dispatch({ type: SET_MENU, opened: true });
     },[]);
 
     const isLoadingInit = isLoading('rawData');

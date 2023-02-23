@@ -26,24 +26,22 @@ function reducer(state, action) {
     }
 }
 
-function handleData({stationData, locationData, metaData}) {
+function handleData({stationData, locationData}) {
     const groupByLocation = d3groups(stationData, d => d["city_id"]);
     // route
     console.time('---group meta---')
     const byLocName = d3group(locationData, d=>d['city_id']);
-    const metabyLocName = d3group(metaData,d=>d['city_id']);
     console.timeEnd('---group meta---')
 
     const locs = groupByLocation.map(d => {
-        const meta = metabyLocName.get(d[0])??[];
         const locinfo = (byLocName.get(d[0])??[])[0]??{};
         return {
             ...locinfo,
             "title": `${locinfo.city} - ${locinfo.country}`,
             count: d[1].length,
-            values: d[1],
+            // values: d[1],
             // genre: d3groups(meta,d=>d.station_genre).map(d=>{d.title=d[0];d.count=d[1].length;return d}),
-            city: [[locinfo.city,meta]].map(d=>{d.title=d[0];d.count=d[1].length;return d}),
+            // city: [[locinfo.city,meta]].map(d=>{d.title=d[0];d.count=d[1].length;return d}),
         }
     });
     locs.sort((a, b) => b.count - a.count);
@@ -55,7 +53,7 @@ function handleData({stationData, locationData, metaData}) {
             long: d3mean(d[1], e => e.long),
             lat: d3mean(d[1], e => e.lat),
             count: d[1].length,
-            values: d[1]
+            // values: d[1]
         }
     }).sort((a, b) => b.count - a.count);
 

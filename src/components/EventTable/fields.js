@@ -18,10 +18,12 @@ export const fields = [
     {
         accessorKey: 'stream_artist',
         header: 'Artist',
+        dynamic:true,
     },
     {
         accessorKey: 'stream_song',
         header: 'Song',
+        dynamic:true,
     },
     {
         accessorKey: 'time_station',

@@ -78,6 +78,12 @@ const config = {
         // LandingPage: lazy(() => import('../pages/LandingPage/LandingPage')),
         PageNotFound: lazy(() => import('../pages/PageNotFound/PageNotFound')),
     },
+    fontFamily: {
+        basename: '',
+        defaultPath: '',
+        fontFamily: `'Roboto', sans-serif`,
+        borderRadius: 12
+    }
 }
 
 export default config

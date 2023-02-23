@@ -10,7 +10,9 @@ import { useLocale } from 'base-shell/lib/providers/Locale'
 import { useMenu } from 'material-ui-shell/lib/providers/Menu'
 import { useTheme as useAppTheme } from 'material-ui-shell/lib/providers/Theme'
 import getMenuItems from '../../config/menuItems'
-import FilterPanel from "../FilterPanel";
+import {useDispatch} from "react-redux";
+import {SET_MENU} from "../../reducer/actions/setting";
+// import FilterPanel from "../FilterPanel";
 
 const Menu = (props) => {
   const intl = useIntl()
@@ -23,6 +25,7 @@ const Menu = (props) => {
   const { appConfig } = useConfig()
   const { setLocale, locale = 'en' } = useLocale()
   const themeContext = useAppTheme()
+  const dispatch = useDispatch();
 
   const menuItems = getMenuItems({
     intl,
@@ -33,10 +36,12 @@ const Menu = (props) => {
     appConfig,
     a2HSContext,
     auth,
+    openAbout:()=>{dispatch({ type: SET_MENU, opened: true });},
     ...props,
   }).filter((item) => {
     return item.visible !== false
   })
+
 
   const index = location ? location.pathname : '/'
 
