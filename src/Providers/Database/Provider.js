@@ -154,22 +154,6 @@ const Provider = ({  children }) => {
     const getDistinctField = useCallback(
         (field) => {
             return state.fields && state.fields.value[field] ? state.fields.value[field] : [];
-            // switch (field) {
-            //     case 'city':
-            //         return state.fields && state.fields.value[field] ? state.fields.value[field] : [];
-            //     case 'country':
-            //         return state.countries && state.countries.value ? state.countries.value.map(d=>d.title) : [];
-            //     case 'station':
-            //         return state.rawData && state.rawData.value.stationData ? uniq(state.rawData.value.stationData.map(d=>d.station)) : [];
-            //     case 'station_genre':
-            //         return state.rawData && state.rawData.value.metaData ? uniq(state.rawData.value.metaData.map(d=>d.station_genre)) : [];
-            //     case 'stream_artist':
-            //         return state.rawData && state.rawData.value.streamDetail ? uniq(state.rawData.value.streamDetail.map(d=>d.stream_artist)) : [];
-            //     case 'stream_song':
-            //         return state.rawData && state.rawData.value.streamDetail ? uniq(state.rawData.value.streamDetail.map(d=>d.stream_song)) : [];
-            //     default:
-            //         return [];
-            // }
         },
         [state]
     );
@@ -207,35 +191,48 @@ const Provider = ({  children }) => {
                     hasError: true,
                 });
             })
-            // new Promise((resolve,reject)=>{
-            //     let data = (state.rawData.value??{metaData:[]}).metaData.slice();
-            //     Object.keys(filter).forEach(filterKey=>{
-            //         if (filter[filterKey] && data.length) {
-            //             if (isArray(filter[filterKey])){
-            //                 if (filter[filterKey].length) {
-            //                     data = data.filter(d => filter[filterKey].find(e=>e===d[filterKey]));
-            //                 }
-            //             }else if (filter[filterKey])
-            //             {
-            //                 data = data.filter(d => d[filterKey] === filter[filterKey]);
-            //             }
-            //         }
-            //     })
-            //     // data.sort((a,b)=>(+new Date(b.time_station))- (+new Date(a.time_station)));
-            //     const value = data.slice(0,limit);
-            //     dispatch({type: 'VALUE_CHANGE', path: 'events', value, isLoading: false});
-            //     resolve(value);
-            // })
+        },
+        [state]
+    );
+    const requestDetail = useCallback(
+        (data) => {
+            dispatch({type: 'LOADING_CHANGED', path: 'detail', isLoading: true});
+            axios.get(`${APIUrl}/meta/${data._id}`).then(({data})=> {
+                // flat data
+                if (data) {
+                    ['stream_info', 'location_info', 'station_info'].forEach(k => {
+                        Object.keys(data[k]).forEach(subk => subk !== '_id' ? (data[subk] = data[k][subk]) : null);
+                        delete data[k];
+                    });
+                    data.lat = data.longitude;
+                    data.long = data.latitude;
+                    delete data.longitude;
+                    delete data.latitude;
+                    dispatch({type: 'VALUE_CHANGE', path: 'detail', value: data, isLoading: false});
+                }else{
+                    dispatch({
+                        type: "ERROR",
+                        path: `detail`,
+                        isLoading: false,
+                        error:'Not found',
+                        hasError: true,
+                    });
+                }
+            }).catch(error=>{
+                dispatch({
+                    type: "ERROR",
+                    path: `detail`,
+                    isLoading: false,
+                    error,
+                    hasError: true,
+                });
+            })
         },
         [state]
     );
     const getDetail = useCallback(
-        (stream_detail_id) => {
-            const r = (state.events && state.events.value ? state.events.value : []).find(d=>d.stream_detail_id===stream_detail_id);
-            if (r) {
-                return getExtra (r,state.rawData.value.stationDataMap,state.rawData.value.locationDataMap,state.rawData.value.streamDetail);
-            }else
-                return null
+        () => {
+            return (state.detail && state.detail.value ? state.detail.value : null);
         },
         [state]
     );
@@ -252,12 +249,9 @@ const Provider = ({  children }) => {
         }
     }
     const getDownloadData = useCallback((listids)=>{
-        if (listids) {
-            let data = (state.rawData.value ?? {metaData: []}).metaData;
-            return listids.sort((a, b) => a - b).map(i => getExtra(data[i], state.rawData.value.stationDataMap, state.rawData.value.locationDataMap, state.rawData.value.streamDetail))
-        }else
-            return (state.rawData.value ?? {metaData: []}).metaData
-                .map(d => getExtra(d, state.rawData.value.stationDataMap, state.rawData.value.locationDataMap, state.rawData.value.streamDetail));
+        return axios.post(`${APIUrl}/meta/`,{id:listids.map(d=>d._id)}).then(({data})=> {
+            return data;
+        })
     },[state]);
 
     const isLoading = useCallback(
@@ -274,6 +268,7 @@ const Provider = ({  children }) => {
             getDistinctField,
             searchByStream,
             getDetail,
+            requestDetail,
             getListError,
             getDownloadData,
             isLoading

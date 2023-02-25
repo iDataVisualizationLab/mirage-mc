@@ -21,12 +21,17 @@ function DetailCard ({data,onSelect}){
                 <tr><td>Location</td><td><Link target={'_blank'} color={'secondary'} href={`https://maps.google.com/?q=${data.lat},${data.long}`}><MapIcon/>{data.city}, {data.country}</Link></td></tr>
                 <tr><td>Radio Garden URL</td><td><Link href={data.url} target={'_blank'} color={'secondary'}>{data.station_url}</Link></td></tr>
                 <tr><td colspan="2"><Divider sx={{mt:2,mb:2}}/></td></tr>
-                <tr onClick={()=>onSelect({stream_artist:[data.stream_artist]})}><td>Artist</td><td  style={{display:'flex'}}><Avatar  aria-label="recipe" sx={{mr:1}}>{data.stream_artist[0]}</Avatar>
-                    <div>
-                        <Typography variant="h5" color={'text.primary'}>{data.stream_artist}</Typography>
-                        <Typography variant="subtitle2">N/A</Typography>
-                    </div></td></tr>
-                <tr onClick={()=>onSelect({stream_song:[data.stream_song]})}><td>Song</td><td>{data.stream_song}</td></tr>
+                {data.stream_artist&&<tr onClick={() => onSelect({stream_artist: [data.stream_artist]})}>
+                    <td>Artist</td>
+                    <td style={{display: 'flex'}}><Avatar aria-label="recipe"
+                                                          sx={{mr: 1}}>{data.stream_artist[0]}</Avatar>
+                        <div>
+                            <Typography variant="h5" color={'text.primary'}>{data.stream_artist}</Typography>
+                            <Typography variant="subtitle2">N/A</Typography>
+                        </div>
+                    </td>
+                </tr>}
+                <tr onClick={data.stream_song?()=>onSelect({stream_song:[data.stream_song]}):null}><td>Song</td><td>{data.stream_song}</td></tr>
                 <tr><td>Time Monitored</td><td>{moment(data.time_station).format('LLL')}</td></tr>
             </table>
 

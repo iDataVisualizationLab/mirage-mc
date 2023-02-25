@@ -10,7 +10,7 @@ import {
     Paper,
     Typography,
     Card,
-    CardContent, Button, Stack
+    CardContent, Button, Stack, IconButton, Collapse
 } from "@mui/material";
 import Earth3D from "../../components/Earth";
 import AutoSizer from "lp-react-virtualized-auto-sizer-react-18";
@@ -28,6 +28,7 @@ import {
 import {semicolor} from "../../containers/LayoutContainer/theme";
 import {useQuestions} from "material-ui-shell/lib/providers/Dialogs/Question";
 import {SET_MENU} from "../../reducer/actions/setting";
+import MinimizeIcon from '@mui/icons-material/Minimize';
 
 const LandingPage = () => {
     const dispatch = useDispatch();
@@ -35,12 +36,12 @@ const LandingPage = () => {
     const {openDialog,closeDialog, setProcessing} = useQuestions()
     const filters = useSelector(selectFilters);
     // const { appConfig } = useConfig()
-    const {getList,isLoading,getEvents,requestEvents,getDetail} = useDatabase();
-    const [currentDetail,setCurrentDetail] = useState();
+    const {getList,isLoading,getEvents,requestEvents,requestDetail,getDetail} = useDatabase();
     const [zoomLoc,setZoomLoc] = useState();
+    const [openEventList,setOpenEventList] = useState(true);
     const legendRef = useRef(null);
 
-
+    const currentDetail = getDetail();
     useEffect(()=>{
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position)=>{
@@ -50,6 +51,11 @@ const LandingPage = () => {
         dispatch({ type: SET_MENU, opened: true });
     },[]);
 
+    useEffect(()=>{
+        if(currentDetail)
+            setZoomLoc({lng:currentDetail.long,lat:currentDetail.lat})
+    },[currentDetail])
+
     const isLoadingInit = isLoading('rawData');
     const isLoadingEvent = isLoading('events');
     const isLoadingLocs = isLoading('locs');
@@ -58,10 +64,8 @@ const LandingPage = () => {
             requestEvents(filters, 1000)
         }
     },[isLoadingInit,filters])
-    const onSelectStream = useCallback(({stream_detail_id})=>{
-        const result = getDetail(stream_detail_id);
-        setCurrentDetail(result);
-        setZoomLoc({lng:result.long,lat:result.lat})
+    const onSelectStream = useCallback((data)=>{
+        requestDetail(data);
     },[getEvents])
 
     const onSelect = (value,extra)=>{
@@ -69,6 +73,10 @@ const LandingPage = () => {
             setZoomLoc({lng:extra.long,lat:extra.lat})
         dispatch(setFilters({value}));
     }
+
+    const onTogleEventList = useCallback(()=>{
+        setOpenEventList(!openEventList);
+    },[openEventList])
 
     return (<Page appBarContent={<>
         {/*<SearchField/>*/}
@@ -95,7 +103,7 @@ const LandingPage = () => {
                     style={{
                         position: "absolute",
                         top: 0,
-                        left: 0,
+                        right: 0,
                         maxHeight:'30vh',
                         overflowY:'auto'
                     }}
@@ -106,10 +114,24 @@ const LandingPage = () => {
             </Grid>
             <Grid container spacing={2} m={0} sx={{pointerEvents:'auto',maxHeight: 450}} alignItems={'end'}>
                 <Grid item xs={8}>
-                    <Card sx={{ minHeight: 275, backgroundColor:(theme)=> semicolor(theme.palette.background.paper)}}>
-                        <CardContent>
-                            <Typography>Event list</Typography>
-                            <EventTable data={getEvents()} onSelectRow={onSelectStream} highlightId={currentDetail}/>
+                    <Card sx={{ minHeight: openEventList?275:null, maxWidth:openEventList?undefined:200, backgroundColor:(theme)=> semicolor(theme.palette.background.paper)}}>
+                        <CardContent sx={{position:'relative'}}>
+                            <Typography>Event List</Typography>
+                            <IconButton
+                                aria-label="close"
+                                onClick={onTogleEventList}
+                                sx={{
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: 0,
+                                    // color: (theme) => theme.palette.grey[500],
+                                }}
+                            >
+                                <MinimizeIcon />
+                            </IconButton>
+                            <Collapse in={openEventList} timeout="auto">
+                                <EventTable data={getEvents()} isLoadingData={isLoadingEvent} onSelectRow={onSelectStream} highlightId={currentDetail}/>
+                            </Collapse>
                         </CardContent>
                     </Card>
                 </Grid>

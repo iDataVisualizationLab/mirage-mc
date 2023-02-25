@@ -3,15 +3,17 @@ import earthNight from '../../assets/earth-night.jpg'
 import Globe from 'react-globe.gl'
 import * as d3 from 'd3'
 import './index.css'
-import {Card, CardContent, Portal, Stack, Typography} from "@mui/material";
-import DetailCard from "../DetailCard";
+import {Card, CardContent, IconButton, Portal, Stack, Typography} from "@mui/material";
 import {semicolor} from "../../containers/LayoutContainer/theme";
-import Scrollbar from "material-ui-shell/lib/components/Scrollbar";
+import SaveIcon from '@mui/icons-material/Save';
+import exportAsImage from "./htm2image";
+
 
 const TOP = 20;
 const colorArr = ['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf', '#9edae5'];
 
 const arcThickScale = d3.scaleLinear().range([0.01,0.7]);
+const labelScale = d3.scaleLinear().range([0.3,0.4]);
 const countriesScale = d3.scaleLinear().range([0.1,1]);
 
 
@@ -19,6 +21,7 @@ const countriesScale = d3.scaleLinear().range([0.1,1]);
 
 const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, legendHolderRef} , ref) => {
     const globeEl = useRef();
+    const holderRef = useRef();
     const [colorKey, setColorKey] = useState('country');
     const [selectPoint, setSelectPoint] = useState();
     const [currentSequnce,setCurrentSequnce] = useState(0);
@@ -27,7 +30,7 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
     const [contriesMap,setcontriesMap] = useState({});
 
     const colorsCategory = useMemo(()=>{
-        return function(otherColor="#454545"){
+        return function(otherColor="#ececec"){
             const scale = d3.scaleOrdinal(colorArr);
             let master = (val)=>{
                 if ((!val)||(val==='')||(val.trim===''))
@@ -49,6 +52,7 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
         const range = d3.extent(locs, d => d?.count);
         
         arcThickScale.domain(range);
+        labelScale.domain(range);
 
         countriesScale.domain(d3.extent(countries, d => {
             contriesMap[d.title] = d;
@@ -124,15 +128,24 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
                 clearInterval(timerRing);
         };
     },[zoomLoc])
+
+    const onSaveImage = useCallback(() => {
+        debugger
+        exportAsImage(globeEl.current,'MIRAGE-mc');
+    },[holderRef,globeEl]);
+
+
     return  <div
         style={{
             background: "#000010",
             position: "relative"
         }}
     >
-        <div style={{
+        <div ref={holderRef}
+             style={{
             transform: "translate(0, -20%)",
             height: '100vh'
+
         }}>
             <Globe
                 width={width}
@@ -150,12 +163,14 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
                 labelsData={countries}
                 labelLat={useCallback(d => d.lat,[])}
                 labelLng={useCallback(d => d.long,[])}
-                labelAltitude={useCallback(d=>(selectPoint&&(selectPoint['title']===d['title']))?0.15:0.1,[selectPoint])}
+                labelAltitude={useCallback(d=>(selectPoint&&(selectPoint['country']===d['title']))?0.05:0.02,[selectPoint])}
                 labelText={useCallback(d => d['title'],[])}
                 // labelSize={d => (selectPoint&&(selectPoint===d))?0.8:arcThickScale(d?.count)/3}
-                labelSize={useCallback(d => arcThickScale(d?.count)/3,[])}
+                labelSize={useCallback(d => (selectPoint&&(selectPoint['country']===d['title']))?1:labelScale(d?.count),[selectPoint])}
+                // labelSize={useCallback(d => labelScale(arcThickScale(d?.count)),[])}
                 labelDotRadius={0}
-                labelColor={useCallback(d => (selectPoint&&(selectPoint['title']===d['title']))?('#dd6700'):(d.color??'white'),[selectPoint])}
+                // labelColor={useCallback(d => (selectPoint&&(selectPoint['country']===d['title']))?('#dd6700'):(d.color??'white'),[selectPoint])}
+                labelColor={useCallback(d => (d.color??'white'),[selectPoint])}
                 labelResolution={2}
 
                 hexBinPointsData={locs}
@@ -166,8 +181,12 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
                 hexBinResolution={4}
                 hexTopColor={useCallback(d => colorsCategory(d.points[0][colorKey]),[])}
                 hexSideColor={useCallback(d => colorsCategory(d.points[0][colorKey]),[])}
-
                 hexBinMerge={false}
+                onHexHover ={useCallback((hex)=>{if (hex){
+                    setSelectPoint(hex.points[0])
+                }else
+                    setSelectPoint(undefined);
+                },[])}
                 hexLabel={useCallback(d => {return `<div class="overlay-holder">
             <div class="overlay-header">
                 <span><b>${d3.sum(d.points,s=>s?.count)}</b> stations</span>
@@ -193,7 +212,7 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
         {legendHolderRef&&<Portal container={legendHolderRef.current}>
             <Card sx={{pointerEvents:'all', overflowY:'auto', backgroundColor: (theme) => semicolor(theme.palette.background.paper)}}>
                 <Stack sx={{m:1,p:0}}>
-                    <Typography>Top #Stations by Countries</Typography>
+                    <Typography>Top Stations by Country <IconButton onClick={onSaveImage}><SaveIcon/></IconButton></Typography>
                     {colorsCategory.domain().map(d => <Typography key={d} variant={'subtitle2'} onClick={()=> {
                         onSelect({country:[d]});
                         if (contriesMap[d])

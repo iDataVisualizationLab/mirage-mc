@@ -220,13 +220,37 @@ const Provider = ({  children }) => {
         },
         [state]
     );
+    const requestDetail = useCallback(
+        (data) => {
+            const {stream_detail_id,city_id,station_id,time_station} = data;
+            dispatch({type: 'LOADING_CHANGED', path: 'detail', isLoading: true});
+            new Promise((resolve,reject)=> {
+                try {
+                    const r = (state.events && state.events.value ? state.events.value : []).find(d => (d.stream_detail_id === stream_detail_id) && (d.city_id === city_id) && (d.station_id === station_id) && (d.time_station === time_station));
+                    if (r) {
+                        dispatch({type: 'VALUE_CHANGE', path: 'detail', value:getExtra(r, state.rawData.value.stationDataMap, state.rawData.value.locationDataMap, state.rawData.value.streamDetail), isLoading: false});
+                        resolve(true);
+                    } else {
+                        dispatch({type: 'VALUE_CHANGE', path: 'detail', value:null, isLoading: false});
+                        resolve(false);
+                    }
+                }catch (error){
+                    dispatch({
+                        type: "ERROR",
+                        path: 'detail',
+                        isLoading: false,
+                        error,
+                        hasError: true,
+                    });
+                    reject()
+                }
+            })
+        },
+        [state]
+    );
     const getDetail = useCallback(
-        (stream_detail_id) => {
-            const r = (state.events && state.events.value ? state.events.value : []).find(d=>d.stream_detail_id===stream_detail_id);
-            if (r) {
-                return getExtra (r,state.rawData.value.stationDataMap,state.rawData.value.locationDataMap,state.rawData.value.streamDetail);
-            }else
-                return null
+        () => {
+            return (state.detail && state.detail.value ? state.detail.value : null);
         },
         [state]
     );
@@ -243,12 +267,17 @@ const Provider = ({  children }) => {
         }
     }
     const getDownloadData = useCallback((listids)=>{
-        if (listids) {
-            let data = (state.rawData.value ?? {metaData: []}).metaData;
-            return listids.sort((a, b) => a - b).map(i => getExtra(data[i], state.rawData.value.stationDataMap, state.rawData.value.locationDataMap, state.rawData.value.streamDetail))
-        }else
-            return (state.rawData.value ?? {metaData: []}).metaData
-                .map(d => getExtra(d, state.rawData.value.stationDataMap, state.rawData.value.locationDataMap, state.rawData.value.streamDetail));
+        return new Promise((resolve,reject)=>{
+            try {
+                if (listids) {
+                    resolve(listids.map(i => getExtra(i, state.rawData.value.stationDataMap, state.rawData.value.locationDataMap, state.rawData.value.streamDetail)));
+                } else
+                    resolve((state.rawData.value ?? {metaData: []}).metaData
+                        .map(d => getExtra(d, state.rawData.value.stationDataMap, state.rawData.value.locationDataMap, state.rawData.value.streamDetail)))
+            }catch (e){
+                reject(e)
+            }
+        })
     },[state]);
 
     const isLoading = useCallback(
@@ -263,6 +292,7 @@ const Provider = ({  children }) => {
             getEvents,
             requestEvents,
             getDistinctField,
+            requestDetail,
             getDetail,
             getListError,
             getDownloadData,

@@ -27,7 +27,8 @@ import {
 
 import allLocales from './locales'
 import allThemes from './themes'
-import FilterPanel from "../components/FilterPanel/index_static";
+// import FilterPanel from "../components/FilterPanel/index_static";
+import FilterPanel from "../components/FilterPanel";
 
 const getMenuItems = (props) => {
   const {
@@ -93,8 +94,8 @@ const getMenuItems = (props) => {
         deferredPrompt.prompt()
       },
       primaryText: intl.formatMessage({
-        id: 'filter',
-        defaultMessage: 'Filter',
+        id: 'search',
+        defaultMessage: 'Search',
       }),
       leftIcon: <FilterAlt />,
       primaryTogglesNestedList: true,

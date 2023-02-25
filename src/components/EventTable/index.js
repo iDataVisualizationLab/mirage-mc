@@ -10,7 +10,7 @@ import {useDatabase} from "../../Providers/Database";
 
 
 
-const EventTable = ({data,onSelectRow,highlightId}) => {
+const EventTable = ({data,isLoadingData,onSelectRow,highlightId}) => {
     const columns = fields;
 
     //optionally access the underlying virtualizer instance
@@ -25,22 +25,27 @@ const EventTable = ({data,onSelectRow,highlightId}) => {
         //scroll to the top of the table when the sorting changes
         rowVirtualizerInstanceRef.current?.scrollToIndex(0);
     }, [sorting]);
+
+
     const handleExportRows = (rows) => {
         setIsLoading(true)
-        const datadownload = getDownloadData(rows.map((row) => row.original.stream_detail_id));
-        const csvOptions = {
-            fieldSeparator: ',',
-            quoteStrings: '"',
-            decimalSeparator: '.',
-            showLabels: true,
-            filename: `mirage-mc-${new Date().toDateString()}`,
-            useBom: true,
-            useKeysAsHeaders: true,
-            // headers: fields.map((c) => c.accessorKey),
-        };
-        const csvExporter = new ExportToCsv(csvOptions);
-        csvExporter.generateCsv(datadownload);
-        setIsLoading(false)
+        getDownloadData(rows.map((row) => row.original)).then((datadownload)=>{
+            const csvOptions = {
+                fieldSeparator: ',',
+                quoteStrings: '"',
+                decimalSeparator: '.',
+                showLabels: true,
+                filename: `mirage-mc-${new Date().toDateString()}`,
+                useBom: true,
+                useKeysAsHeaders: true,
+                // headers: fields.map((c) => c.accessorKey),
+            };
+            const csvExporter = new ExportToCsv(csvOptions);
+            csvExporter.generateCsv(datadownload);
+            setIsLoading(false)
+        }).catch(e=>{
+            setIsLoading(false)
+        })
     };
     const handleExportData = () => {
         setIsLoading(true)
@@ -74,7 +79,7 @@ const EventTable = ({data,onSelectRow,highlightId}) => {
             muiTableContainerProps={{ sx: { maxHeight: '300px' } }}
             initialState={{ density: 'compact' }}
             onSortingChange={setSorting}
-            state={{ isLoading, sorting }}
+            state={{ isLoading:isLoadingData||isLoading, sorting }}
             rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //optional
             rowVirtualizerProps={{ overscan: 8 }} //optionally customize the virtualizer
             muiTableBodyRowProps={({ row }) => ({
