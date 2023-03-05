@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/mirage-mc/static/css/main.0f429865.css",
-    "main.js": "/mirage-mc/static/js/main.87e2254a.js",
+    "main.js": "/mirage-mc/static/js/main.0e29a542.js",
     "static/js/506.9de7bff6.chunk.js": "/mirage-mc/static/js/506.9de7bff6.chunk.js",
     "static/css/743.8139d909.chunk.css": "/mirage-mc/static/css/743.8139d909.chunk.css",
     "static/js/743.1cce034c.chunk.js": "/mirage-mc/static/js/743.1cce034c.chunk.js",
     "static/js/110.0b635806.chunk.js": "/mirage-mc/static/js/110.0b635806.chunk.js",
     "static/js/288.e42d1f67.chunk.js": "/mirage-mc/static/js/288.e42d1f67.chunk.js",
-    "static/js/326.656cd9bc.chunk.js": "/mirage-mc/static/js/326.656cd9bc.chunk.js",
+    "static/js/326.d69c0d4b.chunk.js": "/mirage-mc/static/js/326.d69c0d4b.chunk.js",
     "static/js/448.7044a34a.chunk.js": "/mirage-mc/static/js/448.7044a34a.chunk.js",
     "static/js/77.1cf895ca.chunk.js": "/mirage-mc/static/js/77.1cf895ca.chunk.js",
     "static/js/559.26ced8b2.chunk.js": "/mirage-mc/static/js/559.26ced8b2.chunk.js",
@@ -53,13 +53,13 @@
     "static/media/roboto-greek-ext-700-normal.woff2": "/mirage-mc/static/media/roboto-greek-ext-700-normal.bd9854c751441ccc1a70.woff2",
     "index.html": "/mirage-mc/index.html",
     "main.0f429865.css.map": "/mirage-mc/static/css/main.0f429865.css.map",
-    "main.87e2254a.js.map": "/mirage-mc/static/js/main.87e2254a.js.map",
+    "main.0e29a542.js.map": "/mirage-mc/static/js/main.0e29a542.js.map",
     "506.9de7bff6.chunk.js.map": "/mirage-mc/static/js/506.9de7bff6.chunk.js.map",
     "743.8139d909.chunk.css.map": "/mirage-mc/static/css/743.8139d909.chunk.css.map",
     "743.1cce034c.chunk.js.map": "/mirage-mc/static/js/743.1cce034c.chunk.js.map",
     "110.0b635806.chunk.js.map": "/mirage-mc/static/js/110.0b635806.chunk.js.map",
     "288.e42d1f67.chunk.js.map": "/mirage-mc/static/js/288.e42d1f67.chunk.js.map",
-    "326.656cd9bc.chunk.js.map": "/mirage-mc/static/js/326.656cd9bc.chunk.js.map",
+    "326.d69c0d4b.chunk.js.map": "/mirage-mc/static/js/326.d69c0d4b.chunk.js.map",
     "448.7044a34a.chunk.js.map": "/mirage-mc/static/js/448.7044a34a.chunk.js.map",
     "77.1cf895ca.chunk.js.map": "/mirage-mc/static/js/77.1cf895ca.chunk.js.map",
     "559.26ced8b2.chunk.js.map": "/mirage-mc/static/js/559.26ced8b2.chunk.js.map",
@@ -73,6 +73,6 @@
   },
   "entrypoints": [
     "static/css/main.0f429865.css",
-    "static/js/main.87e2254a.js"
+    "static/js/main.0e29a542.js"
   ]
 }
