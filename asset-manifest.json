@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/mirage-mc/static/css/main.0f429865.css",
-    "main.js": "/mirage-mc/static/js/main.e604b7bf.js",
+    "main.js": "/mirage-mc/static/js/main.b198545b.js",
     "static/js/506.9de7bff6.chunk.js": "/mirage-mc/static/js/506.9de7bff6.chunk.js",
     "static/css/322.5fccf17e.chunk.css": "/mirage-mc/static/css/322.5fccf17e.chunk.css",
     "static/js/322.58f2e181.chunk.js": "/mirage-mc/static/js/322.58f2e181.chunk.js",
@@ -11,8 +11,8 @@
     "static/js/448.7044a34a.chunk.js": "/mirage-mc/static/js/448.7044a34a.chunk.js",
     "static/js/77.1cf895ca.chunk.js": "/mirage-mc/static/js/77.1cf895ca.chunk.js",
     "static/js/559.26ced8b2.chunk.js": "/mirage-mc/static/js/559.26ced8b2.chunk.js",
-    "static/css/855.0faef88a.chunk.css": "/mirage-mc/static/css/855.0faef88a.chunk.css",
-    "static/js/855.381cea60.chunk.js": "/mirage-mc/static/js/855.381cea60.chunk.js",
+    "static/css/476.d6a46692.chunk.css": "/mirage-mc/static/css/476.d6a46692.chunk.css",
+    "static/js/476.069a0862.chunk.js": "/mirage-mc/static/js/476.069a0862.chunk.js",
     "static/js/787.2fd7a200.chunk.js": "/mirage-mc/static/js/787.2fd7a200.chunk.js",
     "static/js/531.25856a82.chunk.js": "/mirage-mc/static/js/531.25856a82.chunk.js",
     "static/js/587.2278e394.chunk.js": "/mirage-mc/static/js/587.2278e394.chunk.js",
@@ -53,7 +53,7 @@
     "static/media/roboto-greek-ext-700-normal.woff2": "/mirage-mc/static/media/roboto-greek-ext-700-normal.bd9854c751441ccc1a70.woff2",
     "index.html": "/mirage-mc/index.html",
     "main.0f429865.css.map": "/mirage-mc/static/css/main.0f429865.css.map",
-    "main.e604b7bf.js.map": "/mirage-mc/static/js/main.e604b7bf.js.map",
+    "main.b198545b.js.map": "/mirage-mc/static/js/main.b198545b.js.map",
     "506.9de7bff6.chunk.js.map": "/mirage-mc/static/js/506.9de7bff6.chunk.js.map",
     "322.5fccf17e.chunk.css.map": "/mirage-mc/static/css/322.5fccf17e.chunk.css.map",
     "322.58f2e181.chunk.js.map": "/mirage-mc/static/js/322.58f2e181.chunk.js.map",
@@ -63,8 +63,8 @@
     "448.7044a34a.chunk.js.map": "/mirage-mc/static/js/448.7044a34a.chunk.js.map",
     "77.1cf895ca.chunk.js.map": "/mirage-mc/static/js/77.1cf895ca.chunk.js.map",
     "559.26ced8b2.chunk.js.map": "/mirage-mc/static/js/559.26ced8b2.chunk.js.map",
-    "855.0faef88a.chunk.css.map": "/mirage-mc/static/css/855.0faef88a.chunk.css.map",
-    "855.381cea60.chunk.js.map": "/mirage-mc/static/js/855.381cea60.chunk.js.map",
+    "476.d6a46692.chunk.css.map": "/mirage-mc/static/css/476.d6a46692.chunk.css.map",
+    "476.069a0862.chunk.js.map": "/mirage-mc/static/js/476.069a0862.chunk.js.map",
     "787.2fd7a200.chunk.js.map": "/mirage-mc/static/js/787.2fd7a200.chunk.js.map",
     "531.25856a82.chunk.js.map": "/mirage-mc/static/js/531.25856a82.chunk.js.map",
     "587.2278e394.chunk.js.map": "/mirage-mc/static/js/587.2278e394.chunk.js.map",
@@ -73,6 +73,6 @@
   },
   "entrypoints": [
     "static/css/main.0f429865.css",
-    "static/js/main.e604b7bf.js"
+    "static/js/main.b198545b.js"
   ]
 }
