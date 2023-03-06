@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useCallback} from 'react'
 import Scrollbar from 'material-ui-shell/lib/components/Scrollbar/Scrollbar'
 import SelectableMenuList from 'material-ui-shell/lib/containers/SelectableMenuList'
 import { useAddToHomeScreen } from 'base-shell/lib/providers/AddToHomeScreen'
@@ -10,8 +10,8 @@ import { useLocale } from 'base-shell/lib/providers/Locale'
 import { useMenu } from 'material-ui-shell/lib/providers/Menu'
 import { useTheme as useAppTheme } from 'material-ui-shell/lib/providers/Theme'
 import getMenuItems from '../../config/menuItems'
-import {useDispatch} from "react-redux";
-import {SET_MENU} from "../../reducer/actions/setting";
+import {useDispatch, useSelector} from "react-redux";
+import {DECREASE_FONT_SIZE, INCREASE_FONT_SIZE, SET_FONT_SIZE, SET_MENU} from "../../reducer/actions/setting";
 // import FilterPanel from "../FilterPanel";
 
 const Menu = (props) => {
@@ -24,8 +24,14 @@ const Menu = (props) => {
   const { toggleThis, isMiniMode, isMiniSwitchVisibility } = menuContext || {}
   const { appConfig } = useConfig()
   const { setLocale, locale = 'en' } = useLocale()
-  const themeContext = useAppTheme()
+  const themeContext = useAppTheme();
   const dispatch = useDispatch();
+  const changeFontSize = (isIncrease)=>{
+    if (isIncrease)
+      dispatch({ type: INCREASE_FONT_SIZE});
+    else
+      dispatch({ type: DECREASE_FONT_SIZE})
+  }
 
   const menuItems = getMenuItems({
     intl,
@@ -37,6 +43,7 @@ const Menu = (props) => {
     a2HSContext,
     auth,
     openAbout:()=>{dispatch({ type: SET_MENU, opened: true });},
+    changeFontSize,
     ...props,
   }).filter((item) => {
     return item.visible !== false

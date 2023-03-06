@@ -18,6 +18,7 @@ import '@fontsource/roboto/400.css'
 import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
 import AboutDialog from "../../pages/About";
+import {useDispatch, useSelector} from "react-redux";
 
 
 const LayoutContent = ({ children }) => {
@@ -27,7 +28,8 @@ const LayoutContent = ({ children }) => {
     const { theme: themeConfig, pwa, notistack } = appConfig || {}
     const { useiOSPWAPrompt, iOSPWAPromptProps } = pwa || {}
     const { themes = [] } = themeConfig || {}
-    const theme = getThemeSource(themeID, themes, isDarkMode, isRTL)
+    const fontSize = useSelector((state) => state.customization.fontSize);
+    const theme = getThemeSource(themeID, themes, isDarkMode, isRTL,fontSize)
 
     return (
         <ThemeProvider theme={theme}>

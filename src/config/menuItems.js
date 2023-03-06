@@ -22,13 +22,15 @@ import {
   FilterAlt,
   Home as HomeIcon,
     Map as MapIcon,
-    FileUpload
-} from '@mui/icons-material'
+    FileUpload,
+  FormatSize
+} from '@mui/icons-material';
 
 import allLocales from './locales'
 import allThemes from './themes'
 // import FilterPanel from "../components/FilterPanel/index_static";
 import FilterPanel from "../components/FilterPanel";
+import FontsizeControl from "../components/FontsizeControl";
 
 const getMenuItems = (props) => {
   const {
@@ -40,12 +42,12 @@ const getMenuItems = (props) => {
     a2HSContext,
     auth: authData,
     openAbout,
+    changeFontSize,
   } = props
 
   const { toggleThis, isDesktop, isAuthMenuOpen, isMiniSwitchVisibility } =
     menuContext
-  const { themeID, setThemeID, isRTL, toggleThisTheme } = themeContext
-
+  const { themeID, setThemeID, isRTL, fontSize, toggleThisTheme, setFontSize } = themeContext
   const { auth, setAuth } = authData
   const { isAppInstallable, isAppInstalled, deferredPrompt } = a2HSContext
 
@@ -124,6 +126,11 @@ const getMenuItems = (props) => {
       primaryTogglesNestedList: true,
       leftIcon: <SettingsIcon />,
       nestedItems: [
+        {
+          primaryText: <FontsizeControl title={intl.formatMessage({id: 'Font size'})}
+                                        onChange={changeFontSize}/>,
+          leftIcon: <FormatSize/>,
+        },
         {
           primaryText: intl.formatMessage({ id: 'theme' }),
           secondaryText: intl.formatMessage({ id: themeID }),

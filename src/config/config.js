@@ -33,7 +33,7 @@ const config = {
     containers: {
         LayoutContainer: lazy(() =>
             // import('material-ui-shell/lib/containers/LayoutContainer/LayoutContainer')
-            import('../containers/LayoutContainer/LayoutContainer')
+            import('../containers/LayoutContainer/LayoutContainer_replace')
         ),
     },
     components: {
@@ -73,6 +73,7 @@ const config = {
         defaultThemeID: 'default',
         defaultIsDarkMode: true,
         defaultIsRTL: false, //change this to true for default Right to Left Language support
+        defaultFontSize:1,
     },
     pages: {
         // LandingPage: lazy(() => import('../pages/LandingPage/LandingPage')),

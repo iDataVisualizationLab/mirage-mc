@@ -107,7 +107,8 @@ const Provider = ({  children }) => {
                         stationDataMap[d['station_id']] = d;
                     });
 
-                    metaData.forEach((d) => {
+                    metaData.forEach((d,i) => {
+                        d._id = i;
                         d.station_genre = stationDataMap[d['station_id']].station_genre;
                         d.city = locationDataMap[d['city_id']].city;
                         d.country = locationDataMap[d['city_id']].country;
@@ -222,11 +223,11 @@ const Provider = ({  children }) => {
     );
     const requestDetail = useCallback(
         (data) => {
-            const {stream_detail_id,city_id,station_id,time_station} = data;
+            const {_id} = data;
             dispatch({type: 'LOADING_CHANGED', path: 'detail', isLoading: true});
             new Promise((resolve,reject)=> {
                 try {
-                    const r = (state.events && state.events.value ? state.events.value : []).find(d => (d.stream_detail_id === stream_detail_id) && (d.city_id === city_id) && (d.station_id === station_id) && (d.time_station === time_station));
+                    const r = (state.events && state.events.value ? state.events.value : []).find(d => (d._id === _id));
                     if (r) {
                         dispatch({type: 'VALUE_CHANGE', path: 'detail', value:getExtra(r, state.rawData.value.stationDataMap, state.rawData.value.locationDataMap, state.rawData.value.streamDetail), isLoading: false});
                         resolve(true);

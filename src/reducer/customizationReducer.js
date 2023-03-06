@@ -3,10 +3,15 @@ import config from '../config/config';
 
 // action - state management
 import * as actionTypes from './actions/setting';
+import {INCREASE_FONT_SIZE} from "./actions/setting";
+
+const persistKey = 'theme'
+const fontSizeKey = `${persistKey}:fontSize`
+const persistFontSize = isNaN(+localStorage.getItem(fontSizeKey))?1:Math.max(0.5,+localStorage.getItem(fontSizeKey));
 
 export const initialState = {
     isOpen: [], // for active default menu
-    fontFamily: config.fontFamily,
+    fontSize:  persistFontSize,
     opened: true
 };
 
@@ -26,10 +31,25 @@ const customizationReducer = (state = initialState, action) => {
                 ...state,
                 opened: action.opened
             };
-        case actionTypes.SET_FONT_FAMILY:
+        case actionTypes.SET_FONT_SIZE:
+            localStorage.setItem(fontSizeKey, action.fontSize)
             return {
                 ...state,
-                fontFamily: action.fontFamily
+                fontSize: action.fontSize
+            };
+        case actionTypes.DECREASE_FONT_SIZE:
+            const _newfontSize = Math.max(0.5, (state.fontSize??1)-0.1 );
+            localStorage.setItem(fontSizeKey, _newfontSize)
+            return {
+                ...state,
+                fontSize: _newfontSize
+            };
+        case actionTypes.INCREASE_FONT_SIZE:
+            const newfontSize = (state.fontSize??1)+0.1;
+            localStorage.setItem(fontSizeKey, newfontSize)
+            return {
+                ...state,
+                fontSize: newfontSize
             };
         case actionTypes.SET_BORDER_RADIUS:
             return {

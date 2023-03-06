@@ -59,7 +59,8 @@ export default function FilterPanel() {
                 dispatch(setFilter({key:f.accessorKey,value}));
             }}
             onInputChange={f.dynamic?((event, newInputValue) => {
-                searchByStream(f.accessorKey,newInputValue);
+                if (newInputValue&&newInputValue!=='')
+                    searchByStream(f.accessorKey,newInputValue);
             }):undefined}
             renderInput={(params) => (
                 <TextField

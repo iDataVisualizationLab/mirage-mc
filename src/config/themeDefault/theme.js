@@ -115,7 +115,7 @@ function reverseTokens(tokensDark) {
 export const tokensLight = reverseTokens(tokensDark);
 
 // mui theme settings
-export const themeSettings = (mode) => {
+export const themeSettings = (mode,fontSize=1) => {
     return {
         palette: {
             mode: mode,
@@ -163,31 +163,31 @@ export const themeSettings = (mode) => {
                 }),
         },
         typography: {
-            fontFamily: ["Inter", "sans-serif"].join(","),
-            fontSize: 12,
+            fontFamily: ["Charis SIL", "Inter", "sans-serif"].join(","),
+            fontSize: 12*fontSize,
             h1: {
-                fontFamily: ["Inter", "sans-serif"].join(","),
-                fontSize: 40,
+                fontFamily: ["Charis SIL", "Inter", "sans-serif"].join(","),
+                fontSize: 40*fontSize,
             },
             h2: {
-                fontFamily: ["Inter", "sans-serif"].join(","),
-                fontSize: 32,
+                fontFamily: ["Charis SIL", "Inter", "sans-serif"].join(","),
+                fontSize: 32*fontSize,
             },
             h3: {
-                fontFamily: ["Inter", "sans-serif"].join(","),
-                fontSize: 24,
+                fontFamily: ["Charis SIL", "Inter", "sans-serif"].join(","),
+                fontSize: 24*fontSize,
             },
             h4: {
-                fontFamily: ["Inter", "sans-serif"].join(","),
-                fontSize: 20,
+                fontFamily: ["Charis SIL", "Inter", "sans-serif"].join(","),
+                fontSize: 20*fontSize,
             },
             h5: {
-                fontFamily: ["Inter", "sans-serif"].join(","),
-                fontSize: 16,
+                fontFamily: ["Charis SIL", "Inter", "sans-serif"].join(","),
+                fontSize: 16*fontSize,
             },
             h6: {
-                fontFamily: ["Inter", "sans-serif"].join(","),
-                fontSize: 14,
+                fontFamily: ["Charis SIL", "Inter", "sans-serif"].join(","),
+                fontSize: 14*fontSize,
             },
         },
     };

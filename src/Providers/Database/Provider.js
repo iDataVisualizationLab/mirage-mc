@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useReducer} from 'react'
 import Context from './Context'
-import {groups as d3groups, group as d3group, mean as d3mean, csv as d3csv} from "d3"
+import {groups as d3groups, sum as d3sum, mean as d3mean, csv as d3csv} from "d3"
 import {isArray, uniq} from 'lodash';
 import axios from 'axios';
 
@@ -25,6 +25,7 @@ function reducer(state, action) {
         case "INIT":
             return {...state,isInit:value}
         default:
+            console.log(type)
             throw new Error()
     }
 }
@@ -60,20 +61,47 @@ const Provider = ({  children }) => {
                 }).then(({data})=> {
                     return data
                 }),
-                axios.get(`${APIUrl}/station/country/`,{
-                    signal: controllerL.signal
-                }).then(({data})=>data),
+                // axios.get(`${APIUrl}/station/country/`,{
+                //     signal: controllerL.signal
+                // }).then(({data})=>data),
                 axios.get(`${APIUrl}/station/fields/`,{
                     signal: controllerL.signal
                 }).then(({data})=>data),
                 axios.get(`${APIUrl}/location/fields/`,{
                     signal: controllerL.signal
                 }).then(({data})=>data),
-                // axios.get(`${APIUrl}/location/`,{
-                //     signal: controllerL.signal
-                // }).then(({data})=>data),
-            ]).then(([locs, countries,stationFields,locationFields]) => {
+                axios.get(`${APIUrl}/location/`,{
+                    signal: controllerL.signal
+                }).then(({data})=>data),
+            // ]).then(([locs, countries,stationFields,locationFields]) => {
+            ]).then(([_city,stationFields,locationFields,locationData]) => {
                 console.timeEnd('-Load data-');
+                const byLocName={}
+                locationData.forEach(d => {
+                    d.lat = (+d.longitude);
+                    d.long = (+d.latitude);
+                    delete d.longitude;
+                    delete d.latitude;
+                    byLocName[d['city_id']] = d;
+                });
+
+                const locs = _city.map(d => {
+                    const locinfo = byLocName[d._id]??{};
+                    return {
+                        ...locinfo,
+                        "title": `${locinfo.city} - ${locinfo.country}`,
+                        count: d.count
+                    }
+                });
+                const countries = d3groups(locs, d => d["country"]).map(d => {
+                    return {
+                        "title": d[0],
+                        long: d3mean(d[1], e => e.long),
+                        lat: d3mean(d[1], e => e.lat),
+                        count: d3sum(d[1],e=>e.count),
+                        // values: d[1]
+                    }
+                });
                 // console.time('-Correct data-');
                 // const locationDataMap = {};
                 // locationData.forEach(d => {

@@ -5,8 +5,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 
 function DetailCard ({data,onSelect}){
-    return <Card sx={{height:'100%',overflowY:'auto'}}>
-        <CardContent >
+    return <>
             <Typography component="div" variant="h2" onClick={()=>onSelect({station:[data.station]},data)}>
                 {data.station}
             </Typography>
@@ -38,7 +37,6 @@ function DetailCard ({data,onSelect}){
             {/*<Typography component="div" variant="subtitle1" color="text.secondary">*/}
             {/*    Time Monitored : {moment(data.time_station).format('LLL')}*/}
             {/*</Typography>*/}
-        </CardContent>
-    </Card>
+    </>
 }
 export default DetailCard

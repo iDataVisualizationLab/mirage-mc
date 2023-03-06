@@ -143,13 +143,14 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
     >
         <div ref={holderRef}
              style={{
-            transform: "translate(0, -20%)",
-            height: '100vh'
+            // transform: "translate(0, -20vh)",
+                 marginTop:'-20vh',
+            height: '120vh'
 
         }}>
             <Globe
                 width={width}
-                height={height}
+                height={height*1.2}
                 ref={globeEl}
                 globeImageUrl={earthNight}
 
@@ -213,16 +214,24 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
             <Card sx={{pointerEvents:'all', overflowY:'auto', backgroundColor: (theme) => semicolor(theme.palette.background.paper)}}>
                 <Stack sx={{m:1,p:0}}>
                     <Typography>Top Stations by Country <IconButton onClick={onSaveImage}><SaveIcon/></IconButton></Typography>
-                    {colorsCategory.domain().map(d => <Typography key={d} variant={'subtitle2'} onClick={()=> {
-                        onSelect({country:[d]});
-                        if (contriesMap[d])
-                            zoomTo(contriesMap[d].long,contriesMap[d].lat);
-                    }}>
-                        <div style={{width:50*countriesScale(contriesMap[d]?.count),height:10, backgroundColor:colorsCategory(d), display:'inline-block', marginRight:5}}></div>{d}
-                    </Typography>)}
-                    <Typography variant={'subtitle2'} >
-                        <div style={{width:10,height:10, backgroundColor:colorsCategory('Other'), display:'inline-block', marginRight:5}}></div>---Other---
-                    </Typography>
+                    {
+                        countries.map(d=><Typography key={d['title']} variant={'subtitle2'} onClick={()=> {
+                            onSelect({country:[d['title']]});
+                            zoomTo(d.long,d.lat);
+                        }}>
+                            <div style={{width:50*countriesScale(d.count),height:10, backgroundColor:colorsCategory(d['title']), display:'inline-block', marginRight:5}}></div>{d['title']}
+                        </Typography>)
+                    }
+                    {/*{colorsCategory.domain().map(d => <Typography key={d} variant={'subtitle2'} onClick={()=> {*/}
+                    {/*    onSelect({country:[d]});*/}
+                    {/*    if (contriesMap[d])*/}
+                    {/*        zoomTo(contriesMap[d].long,contriesMap[d].lat);*/}
+                    {/*}}>*/}
+                    {/*    <div style={{width:50*countriesScale(contriesMap[d]?.count),height:10, backgroundColor:colorsCategory(d), display:'inline-block', marginRight:5}}></div>{d}*/}
+                    {/*</Typography>)}*/}
+                    {/*<Typography variant={'subtitle2'} >*/}
+                    {/*    <div style={{width:10,height:10, backgroundColor:colorsCategory('Other'), display:'inline-block', marginRight:5}}></div>---Other---*/}
+                    {/*</Typography>*/}
                 </Stack>
             </Card>
         </Portal>}

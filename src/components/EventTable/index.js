@@ -76,7 +76,8 @@ const EventTable = ({data,isLoadingData,onSelectRow,highlightId}) => {
             enablePagination={false}
             // enableRowNumbers
             enableRowVirtualization
-            muiTableContainerProps={{ sx: { maxHeight: '300px' } }}
+            muiTablePaperProps={{sx:{display:'flex', flexDirection:"column", height:'100%'}}}
+            muiTableContainerProps={{ sx: { height:'100%', flexGrow:2 } }}
             initialState={{ density: 'compact' }}
             onSortingChange={setSorting}
             state={{ isLoading:isLoadingData||isLoading, sorting }}
@@ -84,7 +85,8 @@ const EventTable = ({data,isLoadingData,onSelectRow,highlightId}) => {
             rowVirtualizerProps={{ overscan: 8 }} //optionally customize the virtualizer
             muiTableBodyRowProps={({ row }) => ({
                 onClick: ()=>{onSelectRow(row.original)},
-                sx: { cursor: 'pointer',opacity:highlightId?(highlightId.stream_detail_id=== row.original.stream_detail_id?1:0.7):1},
+                // sx: { cursor: 'pointer',opacity:highlightId?(highlightId.stream_detail_id=== row.original.stream_detail_id?1:0.7):1},
+                sx: { cursor: 'pointer',opacity:highlightId?(highlightId._id=== row.original._id?1:0.7):1},
             })}
             enableColumnResizing
             defaultColumn={{
@@ -102,11 +104,12 @@ const EventTable = ({data,isLoadingData,onSelectRow,highlightId}) => {
             // }}
             renderTopToolbarCustomActions={({ table }) => (
                 <Box
-                    sx={{ display: 'flex', gap: '1rem', p: '0.5rem', flexWrap: 'wrap' }}
+                    sx={{ display: 'flex', gap: '1rem', p: '0.5rem', flexWrap: 'no-wrap' }}
                 >
                     <Button
                         color="primary"
                         target={"_blank"}
+                        size={"small"}
                         //export all data that is currently in the table (ignore pagination, sorting, filtering, etc.)
                         // onClick={handleExportData}
                         href={process.env.REACT_APP_DATA_DOWNLOAD}
@@ -123,6 +126,7 @@ const EventTable = ({data,isLoadingData,onSelectRow,highlightId}) => {
                         }
                         startIcon={<FileDownloadIcon />}
                         variant="contained"
+                        size={"small"}
                     >
                         Export Current Data
                     </Button>

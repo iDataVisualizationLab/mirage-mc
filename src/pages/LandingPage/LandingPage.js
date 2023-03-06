@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import Earth3D from "../../components/Earth";
 import AutoSizer from "lp-react-virtualized-auto-sizer-react-18";
-import {color as d3color} from 'd3';
+
 import EventTable from "../../components/EventTable";
 import DetailCard from "../../components/DetailCard";
 import SearchField from "../../components/SearchBar";
@@ -29,6 +29,7 @@ import {semicolor} from "../../containers/LayoutContainer/theme";
 import {useQuestions} from "material-ui-shell/lib/providers/Dialogs/Question";
 import {SET_MENU} from "../../reducer/actions/setting";
 import MinimizeIcon from '@mui/icons-material/Minimize';
+import EventDetail from "../../components/EventDetail";
 
 const LandingPage = () => {
     const dispatch = useDispatch();
@@ -112,9 +113,9 @@ const LandingPage = () => {
                 </Stack>
                 {/*<Button color={'secondary'}>Station Map</Button>*/}
             </Grid>
-            <Grid container spacing={2} m={0} sx={{pointerEvents:'auto',maxHeight: 450}} alignItems={'end'}>
-                <Grid item xs={8}>
-                    <Card sx={{ minHeight: openEventList?275:null, maxWidth:openEventList?undefined:200, backgroundColor:(theme)=> semicolor(theme.palette.background.paper)}}>
+            <Grid container spacing={2} m={0} sx={{pointerEvents:'none'}} alignItems={'end'}>
+                <Grid item xs={8} sx={{pointerEvents:'all'}}>
+                    <Card sx={{  maxWidth:openEventList?undefined:200, backgroundColor:(theme)=> semicolor(theme.palette.background.paper)}}>
                         <CardContent sx={{position:'relative'}}>
                             <Typography>Event List</Typography>
                             <IconButton
@@ -124,25 +125,23 @@ const LandingPage = () => {
                                     position: 'absolute',
                                     right: 0,
                                     top: 0,
-                                    // color: (theme) => theme.palette.grey[500],
                                 }}
                             >
                                 <MinimizeIcon />
                             </IconButton>
                             <Collapse in={openEventList} timeout="auto">
-                                <EventTable data={getEvents()} isLoadingData={isLoadingEvent} onSelectRow={onSelectStream} highlightId={currentDetail}/>
+                                <div style={{height:350}}>
+                                    <EventTable data={getEvents()} isLoadingData={isLoadingEvent} onSelectRow={onSelectStream} highlightId={currentDetail}/>
+                                </div>
                             </Collapse>
                         </CardContent>
                     </Card>
                 </Grid>
-                {currentDetail&&<Grid item xs={4} sx={{height:'100%'}}>
-                    <Card sx={{height:'100%', backgroundColor: (theme) => semicolor(theme.palette.background.paper)}}>
-                        <CardContent sx={{height:'100%'}}>
-                            {/*<Typography>Event detail</Typography>*/}
-                            <DetailCard data={currentDetail} onSelect={onSelect}/>
-                        </CardContent>
-                    </Card>
-                </Grid>}
+                <Grid item xs={4} sx={{pointerEvents:'all'}}>
+                    <EventDetail currentDetail={currentDetail} onSelect={onSelect}
+                                 locs={getList('countries')}
+                                 sx={{float:'right'}}/>
+                </Grid>
             </Grid>
         </Grid>
         <Backdrop
