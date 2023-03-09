@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/mirage-mc/static/css/main.0f429865.css",
-    "main.js": "/mirage-mc/static/js/main.8761f56f.js",
+    "main.js": "/mirage-mc/static/js/main.418b6545.js",
     "static/js/506.9de7bff6.chunk.js": "/mirage-mc/static/js/506.9de7bff6.chunk.js",
     "static/css/322.5fccf17e.chunk.css": "/mirage-mc/static/css/322.5fccf17e.chunk.css",
     "static/js/322.58f2e181.chunk.js": "/mirage-mc/static/js/322.58f2e181.chunk.js",
@@ -53,7 +53,7 @@
     "static/media/roboto-greek-ext-700-normal.woff2": "/mirage-mc/static/media/roboto-greek-ext-700-normal.bd9854c751441ccc1a70.woff2",
     "index.html": "/mirage-mc/index.html",
     "main.0f429865.css.map": "/mirage-mc/static/css/main.0f429865.css.map",
-    "main.8761f56f.js.map": "/mirage-mc/static/js/main.8761f56f.js.map",
+    "main.418b6545.js.map": "/mirage-mc/static/js/main.418b6545.js.map",
     "506.9de7bff6.chunk.js.map": "/mirage-mc/static/js/506.9de7bff6.chunk.js.map",
     "322.5fccf17e.chunk.css.map": "/mirage-mc/static/css/322.5fccf17e.chunk.css.map",
     "322.58f2e181.chunk.js.map": "/mirage-mc/static/js/322.58f2e181.chunk.js.map",
@@ -73,6 +73,6 @@
   },
   "entrypoints": [
     "static/css/main.0f429865.css",
-    "static/js/main.8761f56f.js"
+    "static/js/main.418b6545.js"
   ]
 }
