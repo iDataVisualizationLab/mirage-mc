@@ -19,7 +19,7 @@ import {
     ArrowDropDown as ArrowDropDownIcon,
     ArrowDropUp as ArrowDropUpIcon,
     Brightness4 as Brightness4Icon,
-    BrightnessHigh as BrightnessHighIcon,
+    BrightnessHigh as BrightnessHighIcon, Image,
 } from '@mui/icons-material'
 import { useTheme } from '@mui/material/styles'
 
@@ -88,6 +88,8 @@ const MenuHeader = () => {
                         }}
                     >
                         <ListItemSecondaryAction>
+                            <img
+                                src={require('../../assets/logo.png')} loading="lazy" style={{height:'auto',width:100, transform:'translateY(30%)'}}></img>
                             <IconButton
                                 onClick={() => {
                                     toggleThisTheme('isDarkMode')

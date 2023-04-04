@@ -41,6 +41,7 @@ const LandingPage = () => {
     const [zoomLoc,setZoomLoc] = useState();
     const [openEventList,setOpenEventList] = useState(true);
     const legendRef = useRef(null);
+    const toolbarRef = useRef(null);
 
     const currentDetail = getDetail();
     useEffect(()=>{
@@ -81,6 +82,7 @@ const LandingPage = () => {
 
     return (<Page appBarContent={<>
         {/*<SearchField/>*/}
+            <div ref={toolbarRef}></div>
             <UndoRedo/>
         </>
     }>
@@ -91,6 +93,7 @@ const LandingPage = () => {
                                         onSelect={onSelect}
                                         width={width} height={height}
                                         legendHolderRef={legendRef}
+                                        toolbarRef={toolbarRef}
                                         zoomLoc={zoomLoc}
                         />
                     }}
@@ -139,7 +142,8 @@ const LandingPage = () => {
                 </Grid>
                 <Grid item xs={4} sx={{pointerEvents:'all'}}>
                     <EventDetail currentDetail={currentDetail} onSelect={onSelect}
-                                 locs={getList('countries')}
+                                 events={getEvents()}
+                                 locs={getList('locs')}
                                  sx={{float:'right'}}/>
                 </Grid>
             </Grid>

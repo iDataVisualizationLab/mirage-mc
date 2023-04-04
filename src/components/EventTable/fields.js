@@ -1,3 +1,4 @@
+import moment from "moment/moment";
 export const fields = [
     {
         accessorKey: 'city',
@@ -29,7 +30,8 @@ export const fields = [
         accessorKey: 'time_station',
         header: 'Time',
         type:'time',
-        filterDisable:true
+        filterDisable:true,
+        accessorFn:(d)=>d.time_station?moment(d.time_station).format('LLL'):''
     }
 ];
 

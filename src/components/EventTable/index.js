@@ -65,7 +65,7 @@ const EventTable = ({data,isLoadingData,onSelectRow,highlightId}) => {
         csvExporter.generateCsv(datadownload);
         setIsLoading(false)
     };
-
+    // console.log(data)
     return (
         <MaterialReactTable
             columns={columns}

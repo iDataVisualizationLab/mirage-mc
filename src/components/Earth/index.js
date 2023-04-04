@@ -19,7 +19,7 @@ const countriesScale = d3.scaleLinear().range([0.1,1]);
 
 
 
-const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, legendHolderRef} , ref) => {
+const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, legendHolderRef, toolbarRef} , ref) => {
     const globeEl = useRef();
     const holderRef = useRef();
     const [colorKey, setColorKey] = useState('country');
@@ -210,16 +210,19 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
                 onGlobeClick={stopPlay}
             />
         </div>
+        {toolbarRef&&<Portal container={toolbarRef.current}>
+            <IconButton onClick={onSaveImage}><SaveIcon/></IconButton>
+        </Portal>}
         {legendHolderRef&&<Portal container={legendHolderRef.current}>
             <Card sx={{pointerEvents:'all', overflowY:'auto', backgroundColor: (theme) => semicolor(theme.palette.background.paper)}}>
                 <Stack sx={{m:1,p:0}}>
-                    <Typography>Top Stations by Country <IconButton onClick={onSaveImage}><SaveIcon/></IconButton></Typography>
+                    <Typography>Top Stations by Country</Typography>
                     {
                         countries.map(d=><Typography key={d['title']} variant={'subtitle2'} onClick={()=> {
                             onSelect({country:[d['title']]});
                             zoomTo(d.long,d.lat);
                         }}>
-                            <div style={{width:50*countriesScale(d.count),height:10, backgroundColor:colorsCategory(d['title']), display:'inline-block', marginRight:5}}></div>{d['title']}
+                            <div style={{width:50*(countriesScale(d.count)??1),height:10, backgroundColor:colorsCategory(d['title']), display:'inline-block', marginRight:5}}></div>{d['title']}
                         </Typography>)
                     }
                     {/*{colorsCategory.domain().map(d => <Typography key={d} variant={'subtitle2'} onClick={()=> {*/}

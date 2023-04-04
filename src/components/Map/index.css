@@ -4,10 +4,10 @@
 /*#Map .x2y2 {*/
 /*    display: none;*/
 /*}*/
-#Map .legend .traces .legendtoggle {
+.legend .traces .legendtoggle {
     display: none;
 }
-#Map .legend .traces {
+.legend .traces {
     opacity: 1 !important;
 }
 

@@ -26,7 +26,8 @@ function reducer(state, action) {
             return {...state,isInit:value}
         default:
             console.log(type)
-            throw new Error()
+            return state
+            // throw new Error()
     }
 }
 
@@ -84,7 +85,7 @@ const Provider = ({  children }) => {
                     delete d.latitude;
                     byLocName[d['city_id']] = d;
                 });
-
+                debugger
                 const locs = _city.map(d => {
                     const locinfo = byLocName[d._id]??{};
                     return {

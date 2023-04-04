@@ -7,7 +7,8 @@ import {INCREASE_FONT_SIZE} from "./actions/setting";
 
 const persistKey = 'theme'
 const fontSizeKey = `${persistKey}:fontSize`
-const persistFontSize = isNaN(+localStorage.getItem(fontSizeKey))?1:Math.max(0.5,+localStorage.getItem(fontSizeKey));
+const initsize = +localStorage.getItem(fontSizeKey);
+const persistFontSize = (!initsize||isNaN(initsize))?1:Math.max(0.5,+localStorage.getItem(fontSizeKey));
 
 export const initialState = {
     isOpen: [], // for active default menu
