@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react'
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import { useIntl } from 'react-intl'
 import Page from "../../containers/Page/Page";
 import {useDatabase} from "../../Providers/Database";
@@ -30,6 +30,7 @@ import {useQuestions} from "material-ui-shell/lib/providers/Dialogs/Question";
 import {SET_MENU} from "../../reducer/actions/setting";
 import MinimizeIcon from '@mui/icons-material/Minimize';
 import EventDetail from "../../components/EventDetail";
+import useQuery from "../../Providers/Query";
 
 const LandingPage = () => {
     const dispatch = useDispatch();
@@ -42,8 +43,8 @@ const LandingPage = () => {
     const [openEventList,setOpenEventList] = useState(true);
     const legendRef = useRef(null);
     const toolbarRef = useRef(null);
-
     const currentDetail = getDetail();
+    const query = useQuery();
     useEffect(()=>{
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position)=>{
@@ -57,6 +58,7 @@ const LandingPage = () => {
         if(currentDetail)
             setZoomLoc({lng:currentDetail.long,lat:currentDetail.lat})
     },[currentDetail])
+
 
     const isLoadingInit = isLoading('rawData');
     const isLoadingEvent = isLoading('events');

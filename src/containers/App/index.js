@@ -18,9 +18,9 @@ const App = ({ config: appConfig }) => {
                 <AppContainer>
                     <BrowserRouter>
                         <Routes>
-                            {LandingPage && (
-                                <Route path="/" exact element={<LandingPage />} />
-                            )}
+                            {/*{LandingPage && (*/}
+                            {/*    <Route path="/" exact element={<LandingPage />} />*/}
+                            {/*)}*/}
                             <Route
                                 path="*"
                                 element={

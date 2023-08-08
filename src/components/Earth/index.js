@@ -153,7 +153,7 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
                 height={height*1.2}
                 ref={globeEl}
                 globeImageUrl={earthNight}
-
+                showAtmosphere={true}
                 ringsData={ringData}
                 ringColor={()=>'#D39F49'}
                 ringResolution={1000}
