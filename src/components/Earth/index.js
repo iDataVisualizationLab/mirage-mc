@@ -9,8 +9,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import exportAsImage from "./htm2image";
 
 
-const TOP = 20;
-const colorArr = ['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf', '#9edae5'];
+export const TOP = 20;
+export const colorArr = ['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf', '#9edae5'];
 
 const arcThickScale = d3.scaleLinear().range([0.01,0.7]);
 const labelScale = d3.scaleLinear().range([0.3,0.4]);
@@ -19,7 +19,7 @@ const countriesScale = d3.scaleLinear().range([0.1,1]);
 
 
 
-const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, legendHolderRef, toolbarRef} , ref) => {
+const Earth3D = forwardRef(({locs,countries,width,height,onSelect,onSelectLegend, zoomLoc, toolbarRef} , ref) => {
     const globeEl = useRef();
     const holderRef = useRef();
     const [colorKey, setColorKey] = useState('country');
@@ -130,9 +130,16 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
     },[zoomLoc])
 
     const onSaveImage = useCallback(() => {
-        debugger
         exportAsImage(globeEl.current,'MIRAGE-mc');
     },[holderRef,globeEl]);
+
+    useEffect(()=>{
+        debugger
+        onSelectLegend('selectCountry',(d)=>{
+            onSelect({country:[d['title']]});
+            zoomTo(d.long,d.lat);
+        })
+    },[zoomTo,onSelect])
 
 
     return  <div
@@ -144,13 +151,14 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
         <div ref={holderRef}
              style={{
             // transform: "translate(0, -20vh)",
-                 marginTop:'-20vh',
-            height: '120vh'
+            //      marginTop:'-20vh',
+            // height: '120vh'
 
         }}>
             <Globe
                 width={width}
-                height={height*1.2}
+                // height={height*1.2}
+                height={height}
                 ref={globeEl}
                 globeImageUrl={earthNight}
                 showAtmosphere={true}
@@ -213,31 +221,31 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect, zoomLoc, lege
         {toolbarRef&&<Portal container={toolbarRef.current}>
             <IconButton onClick={onSaveImage}><SaveIcon/></IconButton>
         </Portal>}
-        {legendHolderRef&&<Portal container={legendHolderRef.current}>
-            <Card sx={{pointerEvents:'all', overflowY:'auto', backgroundColor: (theme) => semicolor(theme.palette.background.paper)}}>
-                <Stack sx={{m:1,p:0}}>
-                    <Typography>Top Stations by Country</Typography>
-                    {
-                        countries.map(d=><Typography key={d['title']} variant={'subtitle2'} onClick={()=> {
-                            onSelect({country:[d['title']]});
-                            zoomTo(d.long,d.lat);
-                        }}>
-                            <div style={{width:50*(countriesScale(d.count)??1),height:10, backgroundColor:colorsCategory(d['title']), display:'inline-block', marginRight:5}}></div>{d['title']}
-                        </Typography>)
-                    }
-                    {/*{colorsCategory.domain().map(d => <Typography key={d} variant={'subtitle2'} onClick={()=> {*/}
-                    {/*    onSelect({country:[d]});*/}
-                    {/*    if (contriesMap[d])*/}
-                    {/*        zoomTo(contriesMap[d].long,contriesMap[d].lat);*/}
-                    {/*}}>*/}
-                    {/*    <div style={{width:50*countriesScale(contriesMap[d]?.count),height:10, backgroundColor:colorsCategory(d), display:'inline-block', marginRight:5}}></div>{d}*/}
-                    {/*</Typography>)}*/}
-                    {/*<Typography variant={'subtitle2'} >*/}
-                    {/*    <div style={{width:10,height:10, backgroundColor:colorsCategory('Other'), display:'inline-block', marginRight:5}}></div>---Other---*/}
-                    {/*</Typography>*/}
-                </Stack>
-            </Card>
-        </Portal>}
+        {/*{legendHolderRef&&<Portal container={legendHolderRef.current}>*/}
+        {/*    <Card sx={{pointerEvents:'all', overflowY:'auto', backgroundColor: (theme) => semicolor(theme.palette.background.paper)}}>*/}
+        {/*        <Stack sx={{m:1,p:0}}>*/}
+        {/*            <Typography>Top Stations by Country</Typography>*/}
+        {/*            {*/}
+        {/*                countries.map(d=><Typography key={d['title']} variant={'subtitle2'} onClick={()=> {*/}
+        {/*                    onSelect({country:[d['title']]});*/}
+        {/*                    zoomTo(d.long,d.lat);*/}
+        {/*                }}>*/}
+        {/*                    <div style={{width:50*(countriesScale(d.count)??1),height:10, backgroundColor:colorsCategory(d['title']), display:'inline-block', marginRight:5}}></div>{d['title']}*/}
+        {/*                </Typography>)*/}
+        {/*            }*/}
+        {/*            /!*{colorsCategory.domain().map(d => <Typography key={d} variant={'subtitle2'} onClick={()=> {*!/*/}
+        {/*            /!*    onSelect({country:[d]});*!/*/}
+        {/*            /!*    if (contriesMap[d])*!/*/}
+        {/*            /!*        zoomTo(contriesMap[d].long,contriesMap[d].lat);*!/*/}
+        {/*            /!*}}>*!/*/}
+        {/*            /!*    <div style={{width:50*countriesScale(contriesMap[d]?.count),height:10, backgroundColor:colorsCategory(d), display:'inline-block', marginRight:5}}></div>{d}*!/*/}
+        {/*            /!*</Typography>)}*!/*/}
+        {/*            /!*<Typography variant={'subtitle2'} >*!/*/}
+        {/*            /!*    <div style={{width:10,height:10, backgroundColor:colorsCategory('Other'), display:'inline-block', marginRight:5}}></div>---Other---*!/*/}
+        {/*            /!*</Typography>*!/*/}
+        {/*        </Stack>*/}
+        {/*    </Card>*/}
+        {/*</Portal>}*/}
     </div>;
 })
 

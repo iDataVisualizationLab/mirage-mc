@@ -10,7 +10,6 @@ import {Autocomplete, createFilterOptions, Stack, TextField} from "@mui/material
 import {filterSearch} from "../EventTable/fields";
 import {useDatabase} from "../../Providers/Database";
 import ListboxComponent from "../ListboxComponent";
-import TimeRangePicker from "../TimeRangePicker";
 
 const OPTIONS_LIMIT = 50;
 const defaultFilterOptions = createFilterOptions();
@@ -19,7 +18,7 @@ const filterOptionsFunc = (options, state) => {
     return defaultFilterOptions(options, state).slice(0, OPTIONS_LIMIT);
 };
 
-const filterSearchAsyn = filterSearch.filter(f=>f.dynamic);
+
 export default function FilterPanel() {
     const filters = useSelector(selectFilters);
     const dispatch = useDispatch();
@@ -70,18 +69,18 @@ export default function FilterPanel() {
                 />
             )}
         />)}
-        <TimeRangePicker
-            fromVal={(filters["time_station"]?.from)??null}
-            toVal={(filters["time_station"]?.to)??null}
-            onChange={(key,value) => {
-                const val = {...(filters["time_station"] ?? {})};
-                if (value)
-                    val[key] = value;
-                else
-                    delete val[key];
-                dispatch(setFilter({key:"time_station",value:val}));
-            }}
-        />
+        {/*<TimeRangePicker*/}
+        {/*    fromVal={(filters["time_station"]?.from)??null}*/}
+        {/*    toVal={(filters["time_station"]?.to)??null}*/}
+        {/*    onChange={(key,value) => {*/}
+        {/*        const val = {...(filters["time_station"] ?? {})};*/}
+        {/*        if (value)*/}
+        {/*            val[key] = value;*/}
+        {/*        else*/}
+        {/*            delete val[key];*/}
+        {/*        dispatch(setFilter({key:"time_station",value:val}));*/}
+        {/*    }}*/}
+        {/*/>*/}
     </Stack>
 }
 

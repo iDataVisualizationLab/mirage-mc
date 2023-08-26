@@ -189,6 +189,6 @@ export const themeSettings = (mode,fontSize=1) => {
                 fontFamily: ["Charis SIL", "Inter", "sans-serif"].join(","),
                 fontSize: 14*fontSize,
             },
-        },
+        }
     };
 };

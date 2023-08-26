@@ -25,14 +25,15 @@ export const fields = [
         accessorKey: 'stream_song',
         header: 'Song',
         dynamic:true,
-    },
-    {
-        accessorKey: 'time_station',
-        header: 'Time',
-        type:'time',
-        filterDisable:true,
-        accessorFn:(d)=>d.time_station?moment(d.time_station).format('LLL'):''
     }
+    // ,
+    // {
+    //     accessorKey: 'time_station',
+    //     header: 'Time',
+    //     type:'time',
+    //     filterDisable:true,
+    //     accessorFn:(d)=>d.time_station?moment(d.time_station).format('LLL'):''
+    // }
 ];
 
 export const filterSearch = fields.filter(f=>!f.filterDisable);

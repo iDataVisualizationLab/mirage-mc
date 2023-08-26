@@ -41,7 +41,8 @@ const init = {fields: {value:{stationData:[],
     error:false,
     isInit:false
 }
-let isfirst = 0;
+
+const emptyFunc = ()=>{}
 const Provider = ({  children }) => {
     const [state, dispatch] = useReducer(reducer, init);
     useEffect(() => {
@@ -283,6 +284,17 @@ const Provider = ({  children }) => {
         })
     },[state]);
 
+    const setFuncCollection = useCallback((path,func=emptyFunc)=>{
+        dispatch({type: 'VALUE_CHANGE', path, value: func, isLoading: false});
+    },[state])
+
+    const getFuncCollection = useCallback(
+        (path) => {
+            return (state[path] && state[path].value ? state[path].value : emptyFunc);
+        },
+        [state]
+    );
+
     const isLoading = useCallback(
         (path) => {
             return state[path] ? state[path].isLoading : false;
@@ -296,6 +308,8 @@ const Provider = ({  children }) => {
             requestEvents,
             getDistinctField,
             searchByStream,
+            setFuncCollection,
+            getFuncCollection,
             getDetail,
             requestDetail,
             getListError,

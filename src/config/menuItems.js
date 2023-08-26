@@ -30,6 +30,7 @@ import allLocales from './locales'
 import allThemes from './themes'
 // import FilterPanel from "../components/FilterPanel/index_static";
 import FilterPanel from "../components/FilterPanel";
+import LegendPanel from "../components/LegendPanel";
 import FontsizeControl from "../components/FontsizeControl";
 
 const getMenuItems = (props) => {
@@ -93,7 +94,7 @@ const getMenuItems = (props) => {
     {
       value: null,
       onClick: () => {
-        deferredPrompt.prompt()
+        // deferredPrompt.prompt()
       },
       primaryText: intl.formatMessage({
         id: 'search',
@@ -104,6 +105,9 @@ const getMenuItems = (props) => {
       nestedItems: [
         {
           primaryText: <FilterPanel/>
+        },
+        {
+          primaryText: <LegendPanel/>
         }
       ]
     },
