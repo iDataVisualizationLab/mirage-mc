@@ -18,7 +18,6 @@ import { ChevronLeft, Menu as MenuIcon } from '@mui/icons-material'
 export default function ({
                              children,
                              pageTitle,
-                             appBarLeftContent = null,
                              onBackClick,
                              isLoading,
                              appBarContent = null,
@@ -32,11 +31,24 @@ export default function ({
     const { menu } = appConfig || {}
     const { width = 240, appBarLeadingContent = null } = menu || {}
 
+    const { toggleThis, isDesktop, isMenuOpen } = useContext(MenuContext)
     const intl = useIntl()
     let headerTitle = ''
 
     if (typeof pageTitle === 'string' || pageTitle instanceof String) {
         headerTitle = pageTitle
+    }
+
+    const handleDrawerMenuClick = () => {
+        if (!isMenuOpen) {
+            toggleThis('isMiniMode', false)
+            toggleThis('isMenuOpen', true)
+            if (!isDesktop) {
+                toggleThis('isMobileMenuOpen')
+            }
+        } else {
+            toggleThis('isMobileMenuOpen')
+        }
     }
 
     return (
@@ -50,9 +62,10 @@ export default function ({
             }}
         >
             <AppBar
-                position={'absolute'}
+                position={isDesktop ? 'absolute' : undefined}
                 sx={{
-                    width: undefined,
+                    width:
+                        isMenuOpen && isDesktop ? `calc(100% - ${width}px)` : undefined,
                     zIndex: theme.zIndex['drawer'],
                     transition: theme.transitions.create(['width', 'margin'], {
                         easing: theme.transitions.easing.sharp,
@@ -66,14 +79,19 @@ export default function ({
                     boxShadow:'none'
                 }}
             >
-                <Toolbar sx={{
-                    backgroundColor: (t) =>
-                        t.palette.mode === 'dark'
-                            ? t.palette.background.default
-                            : t.palette.primary.dark,
-                    margin: 0,
-                    padding: 0,
-                }}>
+                <Toolbar>
+                    {(isMenuOpen && isDesktop) ||
+                        (!onBackClick && (
+                            <IconButton
+                                color="inherit"
+                                aria-label="open drawer"
+                                onClick={handleDrawerMenuClick}
+                                edge="start"
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                        ))}
+                    {/* james- check if this is dead code? */}
                     {onBackClick && (
                         <IconButton
                             color="inherit"
@@ -83,8 +101,11 @@ export default function ({
                             <ChevronLeft />
                         </IconButton>
                     )}
+                    {!onBackClick && isMenuOpen && false && (
+                        <div style={{ marginRight: 32 }} />
+                    )}
                     {appBarLeadingContent}
-                    {appBarLeftContent}
+                    {/* james- check if this is dead code? */}
                     <Typography variant="h6" color="inherit" noWrap>
                         {headerTitle}
                     </Typography>

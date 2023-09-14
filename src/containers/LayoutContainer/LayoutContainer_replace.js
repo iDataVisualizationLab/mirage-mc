@@ -12,6 +12,8 @@ import { useIntl } from 'react-intl'
 import FilterProvider from 'material-ui-shell/lib/providers/Filter/Provider'
 import VirtualListsProvider from 'material-ui-shell/lib/providers/VirtualLists/Provider'
 import MenuProvider from 'material-ui-shell/lib/providers/Menu/Provider'
+import { IntlProvider } from 'react-intl'
+import OnlineProvider from 'base-shell/lib/providers/Online/Provider'
 import AppThemeProvider from 'material-ui-shell/lib/providers/Theme/Provider'
 import '@fontsource/roboto/300.css'
 import '@fontsource/roboto/400.css'
@@ -23,7 +25,7 @@ import {useDispatch, useSelector} from "react-redux";
 
 const LayoutContent = ({ children }) => {
     const intl = useIntl()
-    const { appConfig } = useConfig()
+    const { appConfig } = useConfig();
     const { themeID, isDarkMode, isRTL } = useTheme()
     const { theme: themeConfig, pwa, notistack } = appConfig || {}
     const { useiOSPWAPrompt, iOSPWAPromptProps } = pwa || {}
@@ -35,14 +37,23 @@ const LayoutContent = ({ children }) => {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <SnackbarProvider maxSnack={3} {...notistack}>
-                <UpdateContainer>
+                {/*<UpdateContainer>*/}
+                {/*    <OnlineProvider>*/}
+                {/*        <IntlProvider*/}
+                {/*            locale={locale}*/}
+                {/*            key={locale}*/}
+                {/*            messages={messages}*/}
+                {/*            onError={onError}*/}
+                {/*        >*/}
                     <QuestionDialogsProvider>
                         <FilterProvider>
                             <VirtualListsProvider>{children}</VirtualListsProvider>
                             <AboutDialog/>
                         </FilterProvider>
                     </QuestionDialogsProvider>
-                </UpdateContainer>
+                {/*        </IntlProvider>*/}
+                {/*    </OnlineProvider>*/}
+                {/*</UpdateContainer>*/}
             </SnackbarProvider>
             {useiOSPWAPrompt && (
                 <PWAPrompt

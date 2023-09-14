@@ -46,8 +46,7 @@ const getMenuItems = (props) => {
     changeFontSize,
   } = props
 
-  const { toggleThis, isDesktop, isAuthMenuOpen, isMiniSwitchVisibility } =
-    menuContext
+
   const { themeID, setThemeID, isRTL, fontSize, toggleThisTheme, setFontSize } = themeContext
   const { auth, setAuth } = authData
   const { isAppInstallable, isAppInstalled, deferredPrompt } = a2HSContext
@@ -148,20 +147,6 @@ const getMenuItems = (props) => {
           primaryTogglesNestedList: true,
           leftIcon: <LanguageIcon />,
           nestedItems: localeItems,
-        },
-        {
-          visible: isDesktop ? true : false,
-          onClick: () => {
-            toggleThis('isMiniSwitchVisibility')
-          },
-          primaryText: intl.formatMessage({
-            id: 'menu_mini_mode',
-          }),
-          leftIcon: isMiniSwitchVisibility ? (
-            <MenuOpenIcon />
-          ) : (
-            <ChromeReaderMode />
-          ),
         },
         {
           onClick: () => {

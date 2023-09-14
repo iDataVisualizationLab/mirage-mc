@@ -11,6 +11,8 @@ axios.defaults.headers.common = {
     "api-key": APIKey,
 };
 
+const emptyArray = [];
+
 function reducer(state, action) {
     const { type, path, isLoading=false,error = false,
         hasError = false, value } = action;
@@ -203,9 +205,9 @@ const Provider = ({  children }) => {
     }
     const getEvents = useCallback(
         () => {
-            return (state.events && state.events.value ? state.events.value : []);
+            return (state.events && state.events.value ? state.events.value : emptyArray);
         },
-        [state]
+        [state.events.value]
     );
     const requestEvents = useCallback(
         (filter,limit) => {

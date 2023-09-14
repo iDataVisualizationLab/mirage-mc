@@ -189,6 +189,16 @@ export const themeSettings = (mode,fontSize=1) => {
                 fontFamily: ["Charis SIL", "Inter", "sans-serif"].join(","),
                 fontSize: 14*fontSize,
             },
+        },
+        components: {
+            MuiButton: {
+                defaultProps: {
+                    size: 'small',
+                    sx: {
+                        textTransform: 'none'
+                    }
+                }
+            },
         }
     };
 };

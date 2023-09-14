@@ -1,12 +1,17 @@
 import React, {useState, useEffect, useRef, useCallback, useMemo, useLayoutEffect, forwardRef} from 'react';
 import earthNight from '../../assets/earth-night.jpg'
+import earthDay from '../../assets/earth-blue-marble.jpg'
 import Globe from 'react-globe.gl'
 import * as d3 from 'd3'
 import './index.css'
-import {Card, CardContent, IconButton, Portal, Stack, Typography} from "@mui/material";
+import {Button, ButtonGroup, Card, CardContent, IconButton, Portal, Stack, Typography} from "@mui/material";
 import {semicolor} from "../../containers/LayoutContainer/theme";
 import SaveIcon from '@mui/icons-material/Save';
 import exportAsImage from "./htm2image";
+import RemoveIcon from '@mui/icons-material/Remove';
+import AddIcon from '@mui/icons-material/Add';
+import {alpha} from "@mui/material/styles";
+import { useTheme } from '@mui/material/styles';
 
 
 export const TOP = 20;
@@ -28,7 +33,7 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect,onSelectLegend
     const [MAP_CENTERs,setMAP_CENTERs] = useState([{ lat: -92.52824601944323, lng: 38.31079101844495, altitude: 1.8 },{ lat: 51.58421865, lng: 45.9571029, altitude: 1.8 },{ lat: 31.3037101, lng: -89.29276214, altitude: 1.8 },{ lat: 33.5842591, lng: -101.8804709, altitude: 1.8 }]);
     const [ringData,setRingData] = useState([]);
     const [contriesMap,setcontriesMap] = useState({});
-
+    const theme = useTheme();
     const colorsCategory = useMemo(()=>{
         return function(otherColor="#ececec"){
             const scale = d3.scaleOrdinal(colorArr);
@@ -134,17 +139,30 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect,onSelectLegend
     },[holderRef,globeEl]);
 
     useEffect(()=>{
-        debugger
         onSelectLegend('selectCountry',(d)=>{
             onSelect({country:[d['title']]});
             zoomTo(d.long,d.lat);
         })
     },[zoomTo,onSelect])
 
+    const zoomIn = useCallback(()=>{
+        if (globeEl.current) {
+            const loc = {...globeEl.current.pointOfView()}
+            loc.altitude = loc.altitude/2
+            globeEl.current.pointOfView(loc,2000)
+        }
+    },[globeEl])
+    const zoomOut = useCallback(()=>{
+        if (globeEl.current) {
+            const loc = {...globeEl.current.pointOfView()}
+            loc.altitude = loc.altitude*2
+            globeEl.current.pointOfView(loc,2000)
+        }
+    },[globeEl])
 
     return  <div
         style={{
-            background: "#000010",
+            background: "#ffffff",
             position: "relative"
         }}
     >
@@ -160,7 +178,8 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect,onSelectLegend
                 // height={height*1.2}
                 height={height}
                 ref={globeEl}
-                globeImageUrl={earthNight}
+                globeImageUrl={(theme.palette.mode==='dark')?earthNight:earthDay}
+                backgroundColor={(theme.palette.mode==='dark')?'black':'#7ec7f6'}
                 showAtmosphere={true}
                 ringsData={ringData}
                 ringColor={()=>'#D39F49'}
@@ -218,34 +237,27 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect,onSelectLegend
                 onGlobeClick={stopPlay}
             />
         </div>
-        {toolbarRef&&<Portal container={toolbarRef.current}>
-            <IconButton onClick={onSaveImage}><SaveIcon/></IconButton>
-        </Portal>}
-        {/*{legendHolderRef&&<Portal container={legendHolderRef.current}>*/}
-        {/*    <Card sx={{pointerEvents:'all', overflowY:'auto', backgroundColor: (theme) => semicolor(theme.palette.background.paper)}}>*/}
-        {/*        <Stack sx={{m:1,p:0}}>*/}
-        {/*            <Typography>Top Stations by Country</Typography>*/}
-        {/*            {*/}
-        {/*                countries.map(d=><Typography key={d['title']} variant={'subtitle2'} onClick={()=> {*/}
-        {/*                    onSelect({country:[d['title']]});*/}
-        {/*                    zoomTo(d.long,d.lat);*/}
-        {/*                }}>*/}
-        {/*                    <div style={{width:50*(countriesScale(d.count)??1),height:10, backgroundColor:colorsCategory(d['title']), display:'inline-block', marginRight:5}}></div>{d['title']}*/}
-        {/*                </Typography>)*/}
-        {/*            }*/}
-        {/*            /!*{colorsCategory.domain().map(d => <Typography key={d} variant={'subtitle2'} onClick={()=> {*!/*/}
-        {/*            /!*    onSelect({country:[d]});*!/*/}
-        {/*            /!*    if (contriesMap[d])*!/*/}
-        {/*            /!*        zoomTo(contriesMap[d].long,contriesMap[d].lat);*!/*/}
-        {/*            /!*}}>*!/*/}
-        {/*            /!*    <div style={{width:50*countriesScale(contriesMap[d]?.count),height:10, backgroundColor:colorsCategory(d), display:'inline-block', marginRight:5}}></div>{d}*!/*/}
-        {/*            /!*</Typography>)}*!/*/}
-        {/*            /!*<Typography variant={'subtitle2'} >*!/*/}
-        {/*            /!*    <div style={{width:10,height:10, backgroundColor:colorsCategory('Other'), display:'inline-block', marginRight:5}}></div>---Other---*!/*/}
-        {/*            /!*</Typography>*!/*/}
-        {/*        </Stack>*/}
-        {/*    </Card>*/}
+        {/*{toolbarRef&&<Portal container={toolbarRef.current}>*/}
+        {/*    <IconButton onClick={onSaveImage}><SaveIcon/></IconButton>*/}
         {/*</Portal>}*/}
+        <ButtonGroup
+            orientation="vertical"
+            aria-label="map tool"
+            variant={"contained"}
+            sx={{position:'absolute',right:0,top:0,margin:1,
+                // backgroundColor: theme=>alpha(theme.palette.common.white, 0.15),
+                '& button':{
+                    padding:1,
+                    // '&:hover': {
+                    //     backgroundColor: theme=>alpha(theme.palette.common.white, 0.25),
+                    // }
+            }}}
+        >
+
+            <Button onClick={onSaveImage}><SaveIcon/></Button>
+            <Button onClick={zoomIn}><AddIcon/></Button>
+            <Button onClick={zoomOut}><RemoveIcon/></Button>
+        </ButtonGroup>
     </div>;
 })
 

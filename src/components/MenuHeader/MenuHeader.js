@@ -27,25 +27,9 @@ const MenuHeader = () => {
     const { toggleThisTheme, isDarkMode, isRTL } = useAppTheme()
     const menuContext = useMenu()
     const theme = useTheme()
-    const {
-        toggleThis,
-        isDesktop,
-        isMiniMode,
-        isMenuOpen,
-        isMiniSwitchVisibility,
-        isAuthMenuOpen,
-    } = menuContext || {}
 
     const isAuthenticated = false;
-    const AvatarConstructor = ({ src, alt, avatar }) => {
-        return (
-            <ListItemAvatar onClick={() => toggleThis('isAuthMenuOpen')}>
-                <Avatar src={src} alt={alt}>
-                    {avatar}
-                </Avatar>
-            </ListItemAvatar>
-        )
-    }
+
 
     const styles = {
         icon: {
@@ -75,11 +59,7 @@ const MenuHeader = () => {
                 padding: 0,
             }}
         >
-            {isMiniMode && isAuthenticated && (
-                <div style={{ ...styles.toolbar }}></div>
-            )}
             <List sx={{ ...(!isAuthenticated ? styles.toolbar : {}) }}>
-                {!isMiniMode && (
                     <ListItem
                         sx={{
                             color: (t) => theme.palette.grey.A100,
@@ -101,35 +81,8 @@ const MenuHeader = () => {
                                     <Brightness4Icon sx={{ ...styles.icon }} />
                                 )}
                             </IconButton>
-                            {isDesktop && (
-                                <>
-                                    {isMiniSwitchVisibility && (
-                                        <IconButton
-                                            onClick={() => {
-                                                toggleThis('isMiniMode', true)
-                                                toggleThis('isMenuOpen', false)
-                                            }}
-                                        >
-                                            <ChromeReaderMode sx={{ ...styles.icon }} />
-                                        </IconButton>
-                                    )}
-                                    <IconButton
-                                        color="inherit"
-                                        onClick={() => {
-                                            toggleThis('isMenuOpen', false)
-                                        }}
-                                    >
-                                        {isRTL ? (
-                                            <ChevronRight sx={{ ...styles.icon }} />
-                                        ) : (
-                                            <ChevronLeft sx={{ ...styles.icon }} />
-                                        )}
-                                    </IconButton>{' '}
-                                </>
-                            )}
                         </ListItemSecondaryAction>
                     </ListItem>
-                )}
             </List>
         </Paper>
     )

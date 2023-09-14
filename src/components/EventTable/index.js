@@ -1,17 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import MaterialReactTable from 'material-react-table';
+import {MaterialReactTable,MRT_ToolbarAlertBanner} from 'material-react-table';
 import Scrollbar from "material-ui-shell/lib/components/Scrollbar";
 import {fields} from "./fields";
-import {Box, Button} from "@mui/material";
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import {Box, Button, IconButton, Toolbar, Tooltip} from "@mui/material";
+import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
+import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import SaveIcon from '@mui/icons-material/Save';
 import { ExportToCsv } from 'export-to-csv';
 import {useDatabase} from "../../Providers/Database";
+import DownloadOption from "./DownloadOption";
 
 
 
-
-const EventTable = ({data,isLoadingData,onSelectRow,highlightId}) => {
-    const columns = fields;
+const EventTable = ({id='tableevent',columns,data,totalData,selectedData,disableAdding,
+                        isLoadingData,onSelectRow,highlightId,onSendToList,onRemoveFromList}) => {
+    const [rowSelection, setRowSelection] = useState({});
 
     //optionally access the underlying virtualizer instance
     const rowVirtualizerInstanceRef = useRef(null);
@@ -23,11 +27,37 @@ const EventTable = ({data,isLoadingData,onSelectRow,highlightId}) => {
 
     useEffect(() => {
         //scroll to the top of the table when the sorting changes
-        rowVirtualizerInstanceRef.current?.scrollToIndex(0);
+        try {
+            rowVirtualizerInstanceRef.current?.scrollToIndex?.(0);
+        } catch (error) {
+            console.error(error);
+        }
     }, [sorting]);
 
-
+    useEffect(()=>{
+        setRowSelection({})
+    },[data])
     const handleExportRows = (rows) => {
+        setIsLoading(true)
+        getDownloadData(rows).then((datadownload)=>{
+            const csvOptions = {
+                fieldSeparator: ',',
+                quoteStrings: '"',
+                decimalSeparator: '.',
+                showLabels: true,
+                filename: `mirage-mc-${new Date().toDateString()}`,
+                useBom: true,
+                useKeysAsHeaders: true,
+                // headers: fields.map((c) => c.accessorKey),
+            };
+            const csvExporter = new ExportToCsv(csvOptions);
+            csvExporter.generateCsv(datadownload);
+            setIsLoading(false)
+        }).catch(e=>{
+            setIsLoading(false)
+        })
+    };
+    const handleExportRowsFromTable = (rows) => {
         setIsLoading(true)
         getDownloadData(rows.map((row) => row.original)).then((datadownload)=>{
             const csvOptions = {
@@ -68,19 +98,23 @@ const EventTable = ({data,isLoadingData,onSelectRow,highlightId}) => {
     // console.log(data)
     return (
         <MaterialReactTable
+            key={id}
+            id={id}
             columns={columns}
             data={data} //10,000 rows
-            enableBottomToolbar={false}
+            // enableBottomToolbar={!!Object.keys(rowSelection).length}
             enableGlobalFilterModes
             enableDensityToggle={false}
             enablePagination={false}
+            enableRowSelection
             // enableRowNumbers
             enableRowVirtualization
             muiTablePaperProps={{sx:{display:'flex', flexDirection:"column", height:'100%'}}}
             muiTableContainerProps={{ sx: { height:'100%', flexGrow:2 } }}
             initialState={{ density: 'compact' }}
             onSortingChange={setSorting}
-            state={{ isLoading:isLoadingData||isLoading, sorting }}
+            onRowSelectionChange={setRowSelection}
+            state={{ isLoading:isLoadingData||isLoading, sorting, rowSelection }}
             rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //optional
             rowVirtualizerProps={{ overscan: 8 }} //optionally customize the virtualizer
             muiTableBodyRowProps={({ row }) => ({
@@ -89,69 +123,64 @@ const EventTable = ({data,isLoadingData,onSelectRow,highlightId}) => {
                 sx: { cursor: 'pointer',opacity:highlightId?(highlightId._id=== row.original._id?1:0.7):1},
             })}
             enableColumnResizing
+            enableFullScreenToggle={false}
             defaultColumn={{
                 minSize: 20, //allow columns to get smaller than default
                 maxSize: 9001, //allow columns to get larger than default
                 size: 100, //make columns wider by default
             }}
-            // muiTableBodyProps={{
-            //     sx: {
-            //         //stripe the rows, make odd rows a darker color
-            //         '& tr': {
-            //             backgroundColor: (theme)=> theme.mode == 'dark' ? 'rgba(0,0,0,0.58)' : 'rgba(255,255,255,0.76)',
-            //         },
-            //     },
-            // }}
-            renderTopToolbarCustomActions={({ table }) => (
-                <Box
-                    sx={{ display: 'flex', gap: '1rem', p: '0.5rem', flexWrap: 'no-wrap' }}
+            positionToolbarAlertBanner={"bottom"}
+            renderTopToolbarCustomActions={({ table }) => {
+                return (
+                    <Box
+                        sx={{display: 'flex', gap: '1rem', p: '0.5rem', flexWrap: 'no-wrap'}}
+                    >
+                        <DownloadOption
+                            // onDownloadSearchList={()=>handleExportRows(table.getPrePaginationRowModel().rows)}
+                            onDownloadSearchList={()=>handleExportRows(totalData)}
+                            onDownloadSelectedList={()=>handleExportRows(selectedData)}
+                        />
+                    </Box>
+                )
+            }}
+            renderBottomToolbar={({table})=> {
+                const handleSelected = onSendToList?() => {
+                    onSendToList(table.getSelectedRowModel().flatRows.map(d=>d.original))
+                }:()=>{};
+                const handleRemoveSelected = onRemoveFromList?() => {
+                    onRemoveFromList(table.getSelectedRowModel().flatRows.map(d=>d.original))
+                }:()=>{};
+                return (<Toolbar
+                    sx={{
+                        display: Object.keys(rowSelection).length ? 'flex' : 'none',
+                    }}
                 >
-                    <Button
-                        color="primary"
-                        target={"_blank"}
-                        size={"small"}
-                        //export all data that is currently in the table (ignore pagination, sorting, filtering, etc.)
-                        // onClick={handleExportData}
-                        href={process.env.REACT_APP_DATA_DOWNLOAD}
-                        startIcon={<FileDownloadIcon />}
+                    <Box sx={{flexGrow: 2}}>
+                        <MRT_ToolbarAlertBanner
+                            stackAlertBanner
+                            table={table}
+                        />
+                    </Box>
+                    {onSendToList && <Tooltip title={"Add to Selected list"}><IconButton
+                        // color="info"
+                        // disabled={!table.getIsSomeRowsSelected()}
+                        onClick={handleSelected}
                         variant="contained"
                     >
-                        Download All Data
-                    </Button>
-                    <Button
-                        disabled={table.getPrePaginationRowModel().rows.length === 0}
-                        //export all rows, including from the next page, (still respects filtering and sorting)
-                        onClick={() =>
-                            handleExportRows(table.getPrePaginationRowModel().rows)
-                        }
-                        startIcon={<FileDownloadIcon />}
+                        <BookmarkAddIcon/>
+                    </IconButton>
+                    </Tooltip>}
+                    {(onRemoveFromList&&(!disableAdding)) && <Tooltip title={"Remove from Selected list"}><IconButton
+                        // color="info"
+                        // disabled={!table.getIsSomeRowsSelected()}
+                        onClick={handleRemoveSelected}
                         variant="contained"
-                        size={"small"}
                     >
-                        Export Current Data
-                    </Button>
-                    {/*<Button*/}
-                    {/*    disabled={table.getRowModel().rows.length === 0}*/}
-                    {/*    //export all rows as seen on the screen (respects pagination, sorting, filtering, etc.)*/}
-                    {/*    onClick={() => handleExportRows(table.getRowModel().rows)}*/}
-                    {/*    startIcon={<FileDownloadIcon />}*/}
-                    {/*    variant="contained"*/}
-                    {/*>*/}
-                    {/*    Export Page Rows*/}
-                    {/*</Button>*/}
-                    {/*<Button*/}
-                    {/*    disabled={*/}
-                    {/*        !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()*/}
-                    {/*    }*/}
-                    {/*    //only export selected rows*/}
-                    {/*    onClick={() => handleExportRows(table.getSelectedRowModel().rows)}*/}
-                    {/*    startIcon={<FileDownloadIcon />}*/}
-                    {/*    variant="contained"*/}
-                    {/*>*/}
-                    {/*    Export Selected Rows*/}
-                    {/*</Button>*/}
-                </Box>
-            )}
+                        <BookmarkRemoveIcon/>
+                    </IconButton>
+                    </Tooltip>}
+                </Toolbar>)
+            }}
         />
     );
 };

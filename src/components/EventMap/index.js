@@ -8,7 +8,6 @@ export default function ({currentDetail,locs, events}) {
     useEffect(()=>{
         try{
             const _locsMap = {};
-            debugger
             locs.forEach(d=>_locsMap[d['city_id']]=d);
             const _locs = groups(events,d=>d['city_id']).map(([c,cou])=>({
                 title:_locsMap[c]?.title,

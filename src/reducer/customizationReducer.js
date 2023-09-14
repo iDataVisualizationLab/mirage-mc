@@ -13,7 +13,7 @@ const persistFontSize = (!initsize||isNaN(initsize))?1:Math.max(0.5,+localStorag
 export const initialState = {
     isOpen: [], // for active default menu
     fontSize:  persistFontSize,
-    opened: true
+    opened: true,
 };
 
 // ==============================|| CUSTOMIZATION REDUCER ||============================== //

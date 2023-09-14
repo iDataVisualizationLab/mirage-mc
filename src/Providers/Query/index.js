@@ -7,7 +7,9 @@ export default function useQuery() {
     const {requestDetail} = useDatabase();
     return useMemo(() => {
         const queryObject = new URLSearchParams(search);
-        requestDetail({_id:queryObject.get("id")});
-        return queryObject;
+        if (queryObject.get("id")) {
+            requestDetail({_id: queryObject.get("id")});
+            return queryObject;
+        }
     }, [search]);
 }

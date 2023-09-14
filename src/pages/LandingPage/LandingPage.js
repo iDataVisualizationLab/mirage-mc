@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
-import { useIntl } from 'react-intl'
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import { useIntl } from 'react-intl';
 import Page from "../../containers/Page/Page";
 import {useDatabase} from "../../Providers/Database";
 import {
@@ -32,9 +32,13 @@ import EventDetail from "../../components/EventDetail";
 import useQuery from "../../Providers/Query";
 import * as FlexLayout from "flexlayout-react";
 import "./layout.css";
-import {AddCircle} from "@mui/icons-material";
+import {AddCircle, Brightness4 as Brightness4Icon, BrightnessHigh as BrightnessHighIcon} from "@mui/icons-material";
 import EventMap from "../../components/EventMap";
-
+import Search from "../../components/Search";
+import MediaDetail from "../../components/MediaDetail";
+import AppHeader from "../../components/AppHeader";
+import {actionCreators} from "../../reducer/actions/selectedList";
+import {fields, fieldsWithoutSelected} from "../../components/EventTable/fields";
 
 
 
@@ -47,9 +51,20 @@ const LandingPage = () => {
     // const { appConfig } = useConfig()
     const {getList,isLoading,getEvents,requestEvents,requestDetail,getDetail,setFuncCollection} = useDatabase();
     const [zoomLoc,setZoomLoc] = useState();
-    const [layoutItems,setLayoutItems] = useState({eventList:true,eventDetail:true,eventMap:true});
+    const [layoutItems,setLayoutItems] = useState({
+        Earth:{key:"Earth View",val:true},
+        eventList:{key:"Song Details",val:true},
+        eventDetail:{key:"Song List",val:true},
+        eventMap:{key:"Song List Map",val:true},
+        mediaDetail:{key:"Listen",val:true},
+        eventSelectedList:{key:"Selected Songs",val:false},
+        eventSelectedListDetail:{key:"Song List Details",val:false},
+    });
     const toolbarRef = useRef(null);
+    const layoutRef = useRef(null);
     const currentDetail = getDetail();
+    const eventTotalData = useSelector(state => state.seletedList.currentList);
+    const eventSelectedData = useSelector(state => Array.from(state.seletedList.items.values( ) ));
     const query = useQuery();
     useEffect(()=>{
         if (navigator.geolocation) {
@@ -157,6 +172,11 @@ const LandingPage = () => {
                                     type: "tab",
                                     name: "Song List",
                                     component: "eventList",
+                                },
+                                {
+                                    type: "tab",
+                                    name: "Selected Songs",
+                                    component: "eventSelectedList",
                                 }
                             ]
                         },
@@ -166,12 +186,16 @@ const LandingPage = () => {
                             children: [
                                 {
                                     type: "tab",
-                                    name: "Map",
+                                    name: "Song List Map",
                                     component: "eventMap",
                                 },{
                                     type: "tab",
                                     name: "Song Detail",
                                     component: "eventDetail",
+                                },{
+                                    type: "tab",
+                                    name: "Listen",
+                                    component: "mediaDetail",
                                 }
                             ]
                         }
@@ -181,14 +205,38 @@ const LandingPage = () => {
         }
     }));
 
+    useEffect(()=>{
+        dispatch(actionCreators.newList(getEvents()));
+    },[getEvents()])
+
     const factory = (node) => {
         let component = node.getComponent();
         switch (component){
             case 'eventList':
-                return <EventTable data={getEvents()}
+                return <EventTable id='eventListTable'
+                                   data={eventTotalData??[]}
+                                   columns={fields}
                                    isLoadingData={isLoadingEvent}
                                    onSelectRow={onSelectStream}
                                    highlightId={currentDetail}
+                                   totalData={eventTotalData}
+                                   selectedData={eventSelectedData}
+                                   onSendToList={(l)=>dispatch(actionCreators.addsToBasket(l))}
+                                   onRemoveFromList={(l)=>dispatch(actionCreators.removeItems(l))}
+                                   // onTogleWin={()=>onTogleWin("eventList")}
+                />;
+            case 'eventSelectedList':
+                return <EventTable id='eventSelectedListTable'
+                                   data={eventSelectedData}
+                                   columns={fieldsWithoutSelected}
+                                   isLoadingData={isLoadingEvent}
+                                   onSelectRow={onSelectStream}
+                                   highlightId={currentDetail}
+                                   totalData={eventTotalData}
+                                   selectedData={eventSelectedData}
+                                   disableAdding={true}
+                                   onSendToList={(l)=>dispatch(actionCreators.addsToBasket(l))}
+                                   onRemoveFromList={(l)=>dispatch(actionCreators.removeItems(l))}
                                    // onTogleWin={()=>onTogleWin("eventList")}
                 />
             case 'eventMap':
@@ -203,6 +251,13 @@ const LandingPage = () => {
                                     locs={getList('locs')}
                                     sx={{height:'100%',position:'relative'}}
                                     // onTogleWin={()=>onTogleWin("eventDetail")}
+                />
+            case 'mediaDetail':
+                return <MediaDetail currentDetail={currentDetail} onSelect={onSelect}
+                                    events={getEvents()}
+                                    locs={getList('locs')}
+                                    sx={{height:'100%',position:'relative'}}
+                    // onTogleWin={()=>onTogleWin("eventDetail")}
                 />
             case 'Earth':
                 return <AutoSizer style={{ height: '100%', width: '100%' }} >
@@ -222,8 +277,10 @@ const LandingPage = () => {
         }
     }
     const onRenderTabSet = (tabSetNode, renderValues) =>{
-        if (Object.keys(layoutItems).reduce((pre,k)=>pre || (layoutItems[k]===false),false)) {
+        // debugger
+        if (!Object.keys(layoutItems).reduce((pre,k)=>pre && (layoutItems[k].val),true)) {
             renderValues.stickyButtons.push(<AddCircle
+                color={'primary'}
                 title= "Add"
                 key= "Add button"
                 className={"flexlayout__tab_toolbar_button"}
@@ -240,17 +297,28 @@ const LandingPage = () => {
             // }));
         }
     }
-
-    return (<Page appBarContent={<>
-        {/*<SearchField/>*/}
-        {/*    <div>*/}
-        {/*        {*/}
-        {/*            Object.keys(layoutItems).map(k=>layoutItems[k]?'':<div key={`plugin-${k}`}*/}
-        {/*            onClick={()=>onTogleWin(k)}>*/}
-        {/*                <Button>{k}</Button>*/}
-        {/*            </div>)*/}
-        {/*        }*/}
-        {/*    </div>*/}
+    const layoutItemsOnChange = useCallback((key,item,isOn)=>{
+        debugger
+        if (layoutRef.current)
+        {
+            if (isOn)
+                layoutRef.current.addTabToActiveTabSet({
+                    name: item.key,
+                    component: key,
+                });
+            else{
+                // layouts
+                console.log(layouts)
+                debugger
+            }
+            layoutItems[key].val = isOn;
+            setLayoutItems({...layoutItems});
+        }
+    },[layoutRef,layouts])
+    return (<Page
+            appBarLeftContent={<AppHeader layoutItems={layoutItems} layoutItemsOnChange={layoutItemsOnChange}/>}
+            appBarContent={<>
+            <Search/>
             <div ref={toolbarRef}></div>
             <UndoRedo/>
         </>
@@ -271,13 +339,23 @@ const LandingPage = () => {
             {/*</div>*/}
         <div style={{height: '100%', position:'relative', pointerEvents:'all', overflow:'hidden'}}>
             <FlexLayout.Layout model={layouts}
+                               ref={layoutRef}
                                factory={factory}
                                onRenderTabSet={onRenderTabSet}
+                               popoutURL="#/popout"
+                               realtimeResize={false}
                                onModelChange={(m)=>{
                                    // check tab
-                                   Object.keys(layoutItems).forEach(k=>layoutItems[k]=false);
-                                   m._root._children.forEach(m=>m._children.forEach(m=>layoutItems[m._attributes.component]=true))
+                                   Object.keys(layoutItems).forEach(k=>layoutItems[k].val=false);
+                                   m._root._children.forEach(m=>m._children.forEach(m=> {
+                                       if (m._attributes.component&&layoutItems[m._attributes.component])
+                                           layoutItems[m._attributes.component].val = true
+                                       else
+                                            m._children.forEach(m => layoutItems[m._attributes.component]?(layoutItems[m._attributes.component].val = true):'')
+                                   }));
+                                   m._borders._borders.forEach(m=>m._children.forEach(m=>layoutItems[m._attributes.component].val=true));
                                    setLayoutItems(layoutItems)
+                                   setLayouts(m)
                                }}
             />
 

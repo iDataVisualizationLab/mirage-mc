@@ -38,7 +38,7 @@ const config = {
     },
     components: {
         Loading,
-        Menu: lazy(() => import('material-ui-shell/lib/containers/Menu/Menu')),
+        // Menu: lazy(() => import('material-ui-shell/lib/containers/Menu/Menu')),
     },
     pwa: {
         useiOSPWAPrompt: true,
