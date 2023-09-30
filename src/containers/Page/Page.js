@@ -11,7 +11,7 @@ import {
     Toolbar,
     IconButton,
     LinearProgress,
-    Typography,
+    Typography, Menu, MenuItem, Box,
 } from '@mui/material'
 import { ChevronLeft, Menu as MenuIcon } from '@mui/icons-material'
 
@@ -38,6 +38,7 @@ export default function ({
     if (typeof pageTitle === 'string' || pageTitle instanceof String) {
         headerTitle = pageTitle
     }
+
 
     return (
         <div
@@ -91,6 +92,7 @@ export default function ({
                     <div style={{ flex: '1 1 auto' }} />
                     {appBarContent}
                 </Toolbar>
+
             </AppBar>
             <div
                 style={{

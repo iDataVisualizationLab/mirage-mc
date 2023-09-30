@@ -3,8 +3,8 @@ import {MaterialReactTable,MRT_ToolbarAlertBanner} from 'material-react-table';
 import Scrollbar from "material-ui-shell/lib/components/Scrollbar";
 import {fields} from "./fields";
 import {Box, Button, IconButton, Toolbar, Tooltip} from "@mui/material";
-import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
-import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
+import AddEventIcon from '@mui/icons-material/AddShoppingCart';
+import RemoveEventIcon from '@mui/icons-material/RemoveShoppingCart';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import SaveIcon from '@mui/icons-material/Save';
 import { ExportToCsv } from 'export-to-csv';
@@ -110,13 +110,13 @@ const EventTable = ({id='tableevent',columns,data,totalData,selectedData,disable
             // enableRowNumbers
             enableRowVirtualization
             muiTablePaperProps={{sx:{display:'flex', flexDirection:"column", height:'100%'}}}
-            muiTableContainerProps={{ sx: { height:'100%', flexGrow:2 } }}
+            // muiTableContainerProps={{ sx: { height:'100%', flexGrow:2 } }}
             initialState={{ density: 'compact' }}
             onSortingChange={setSorting}
             onRowSelectionChange={setRowSelection}
             state={{ isLoading:isLoadingData||isLoading, sorting, rowSelection }}
             rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //optional
-            rowVirtualizerProps={{ overscan: 8 }} //optionally customize the virtualizer
+            rowVirtualizerProps={{ overscan: 2 }} //optionally customize the virtualizer
             muiTableBodyRowProps={({ row }) => ({
                 onClick: ()=>{onSelectRow(row.original)},
                 // sx: { cursor: 'pointer',opacity:highlightId?(highlightId.stream_detail_id=== row.original.stream_detail_id?1:0.7):1},
@@ -161,22 +161,22 @@ const EventTable = ({id='tableevent',columns,data,totalData,selectedData,disable
                             table={table}
                         />
                     </Box>
-                    {onSendToList && <Tooltip title={"Add to Selected list"}><IconButton
+                    {(onSendToList&&(!disableAdding)) && <Tooltip title={"Add to Selected list"}><IconButton
                         // color="info"
                         // disabled={!table.getIsSomeRowsSelected()}
                         onClick={handleSelected}
                         variant="contained"
                     >
-                        <BookmarkAddIcon/>
+                        <AddEventIcon/>
                     </IconButton>
                     </Tooltip>}
-                    {(onRemoveFromList&&(!disableAdding)) && <Tooltip title={"Remove from Selected list"}><IconButton
+                    {(onRemoveFromList) && <Tooltip title={"Remove from Selected list"}><IconButton
                         // color="info"
                         // disabled={!table.getIsSomeRowsSelected()}
                         onClick={handleRemoveSelected}
                         variant="contained"
                     >
-                        <BookmarkRemoveIcon/>
+                        <RemoveEventIcon/>
                     </IconButton>
                     </Tooltip>}
                 </Toolbar>)

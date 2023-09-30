@@ -33,7 +33,6 @@ export default (state = initialState, action) => {
                 ...removeItems(state.items,state.currentList, action.payload)
             };
         case actionTypes.NEW_LIST:
-            debugger
             return {
                 ...state,
                 currentList: initList(state.items, action)

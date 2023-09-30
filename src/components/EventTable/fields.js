@@ -1,7 +1,7 @@
 import moment from "moment/moment";
 import {Checkbox} from "@mui/material";
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import EventOutIcon from '@mui/icons-material/ShoppingCartCheckout';
+import EventIcon from '@mui/icons-material/ShoppingCart';
 export const fields = [
     {
         id: 'inBasket',
@@ -11,8 +11,8 @@ export const fields = [
         Cell: ({ renderedCellValue, row }) => (
             <Checkbox
                 disabled
-                icon={<BookmarkBorderIcon />}
-                checkedIcon={<BookmarkIcon color={'secondary'}/>}
+                icon={<EventOutIcon />}
+                checkedIcon={<EventIcon color={'secondary'}/>}
                 checked={row.original.inBasket}
             />
         ),

@@ -53,8 +53,8 @@ const LandingPage = () => {
     const [zoomLoc,setZoomLoc] = useState();
     const [layoutItems,setLayoutItems] = useState({
         Earth:{key:"Earth View",val:true},
-        eventList:{key:"Song Details",val:true},
-        eventDetail:{key:"Song List",val:true},
+        eventList:{key:"Song List",val:true},
+        eventDetail:{key:"Song Details",val:true},
         eventMap:{key:"Song List Map",val:true},
         mediaDetail:{key:"Listen",val:true},
         eventSelectedList:{key:"Selected Songs",val:false},
@@ -276,27 +276,27 @@ const LandingPage = () => {
                 return ''
         }
     }
-    const onRenderTabSet = (tabSetNode, renderValues) =>{
-        // debugger
-        if (!Object.keys(layoutItems).reduce((pre,k)=>pre && (layoutItems[k].val),true)) {
-            renderValues.stickyButtons.push(<AddCircle
-                color={'primary'}
-                title= "Add"
-                key= "Add button"
-                className={"flexlayout__tab_toolbar_button"}
-                style={{width: "1.1em", height: "1.1em"}}
-            />)
-            // renderValues.stickyButtons.push(React.createElement("img", {
-            //     src: "images/add.svg",
-            //     alt: "Add",
-            //     key: "Add button",
-            //     title: "Add Tab (using onRenderTabSet callback, see Demo)",
-            //     style: {width: "1.1em", height: "1.1em"},
-            //     className: "flexlayout__tab_toolbar_button",
-            //     // onClick: function () { return _this.onAddFromTabSetButton(node); }
-            // }));
-        }
-    }
+    // const onRenderTabSet = (tabSetNode, renderValues) =>{
+    //     // debugger
+    //     if (!Object.keys(layoutItems).reduce((pre,k)=>pre && (layoutItems[k].val),true)) {
+    //         renderValues.stickyButtons.push(<AddCircle
+    //             color={'primary'}
+    //             title= "Add"
+    //             key= "Add button"
+    //             className={"flexlayout__tab_toolbar_button"}
+    //             style={{width: "1.1em", height: "1.1em"}}
+    //         />)
+    //         // renderValues.stickyButtons.push(React.createElement("img", {
+    //         //     src: "images/add.svg",
+    //         //     alt: "Add",
+    //         //     key: "Add button",
+    //         //     title: "Add Tab (using onRenderTabSet callback, see Demo)",
+    //         //     style: {width: "1.1em", height: "1.1em"},
+    //         //     className: "flexlayout__tab_toolbar_button",
+    //         //     // onClick: function () { return _this.onAddFromTabSetButton(node); }
+    //         // }));
+    //     }
+    // }
     const layoutItemsOnChange = useCallback((key,item,isOn)=>{
         debugger
         if (layoutRef.current)
@@ -308,8 +308,10 @@ const LandingPage = () => {
                 });
             else{
                 // layouts
-                console.log(layouts)
-                debugger
+                // find id
+                const current = Object.keys(layouts._idMap).find(k=>layouts._idMap[k]._attributes.component===key)
+                if (current)
+                    layouts.doAction(FlexLayout.Actions.deleteTab(current))
             }
             layoutItems[key].val = isOn;
             setLayoutItems({...layoutItems});
@@ -341,19 +343,23 @@ const LandingPage = () => {
             <FlexLayout.Layout model={layouts}
                                ref={layoutRef}
                                factory={factory}
-                               onRenderTabSet={onRenderTabSet}
+                               // onRenderTabSet={onRenderTabSet}
                                popoutURL="#/popout"
                                realtimeResize={false}
                                onModelChange={(m)=>{
                                    // check tab
                                    Object.keys(layoutItems).forEach(k=>layoutItems[k].val=false);
-                                   m._root._children.forEach(m=>m._children.forEach(m=> {
+                                   // m._root._children.forEach(m=>m._children.forEach(m=> {
+                                   //     if (m._attributes.component&&layoutItems[m._attributes.component])
+                                   //         layoutItems[m._attributes.component].val = true
+                                   //     else
+                                   //          m._children.forEach(m => layoutItems[m._attributes.component]?(layoutItems[m._attributes.component].val = true):'')
+                                   // }));
+                                   // m._borders._borders.forEach(m=>m._children.forEach(m=>layoutItems[m._attributes.component].val=true));
+                                   Object.values(m._idMap).forEach(m=> {
                                        if (m._attributes.component&&layoutItems[m._attributes.component])
                                            layoutItems[m._attributes.component].val = true
-                                       else
-                                            m._children.forEach(m => layoutItems[m._attributes.component]?(layoutItems[m._attributes.component].val = true):'')
-                                   }));
-                                   m._borders._borders.forEach(m=>m._children.forEach(m=>layoutItems[m._attributes.component].val=true));
+                                   })
                                    setLayoutItems(layoutItems)
                                    setLayouts(m)
                                }}
