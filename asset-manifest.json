@@ -1,9 +1,9 @@
 {
   "files": {
     "main.css": "./static/css/main.0f429865.css",
-    "main.js": "./static/js/main.2f89253e.js",
+    "main.js": "./static/js/main.e9e906a3.js",
     "static/js/506.9de7bff6.chunk.js": "./static/js/506.9de7bff6.chunk.js",
-    "static/js/36.8a65062b.chunk.js": "./static/js/36.8a65062b.chunk.js",
+    "static/js/36.167e7172.chunk.js": "./static/js/36.167e7172.chunk.js",
     "static/js/288.91738621.chunk.js": "./static/js/288.91738621.chunk.js",
     "static/css/987.342470ff.chunk.css": "./static/css/987.342470ff.chunk.css",
     "static/js/987.0cf0d269.chunk.js": "./static/js/987.0cf0d269.chunk.js",
@@ -60,9 +60,9 @@
     "index.html": "./index.html",
     "static/media/Spotify_icon.svg": "./static/media/Spotify_icon.5017cf1664eff772b580a4defe313c47.svg",
     "main.0f429865.css.map": "./static/css/main.0f429865.css.map",
-    "main.2f89253e.js.map": "./static/js/main.2f89253e.js.map",
+    "main.e9e906a3.js.map": "./static/js/main.e9e906a3.js.map",
     "506.9de7bff6.chunk.js.map": "./static/js/506.9de7bff6.chunk.js.map",
-    "36.8a65062b.chunk.js.map": "./static/js/36.8a65062b.chunk.js.map",
+    "36.167e7172.chunk.js.map": "./static/js/36.167e7172.chunk.js.map",
     "288.91738621.chunk.js.map": "./static/js/288.91738621.chunk.js.map",
     "987.342470ff.chunk.css.map": "./static/css/987.342470ff.chunk.css.map",
     "987.0cf0d269.chunk.js.map": "./static/js/987.0cf0d269.chunk.js.map",
@@ -79,6 +79,6 @@
   },
   "entrypoints": [
     "static/css/main.0f429865.css",
-    "static/js/main.2f89253e.js"
+    "static/js/main.e9e906a3.js"
   ]
 }
