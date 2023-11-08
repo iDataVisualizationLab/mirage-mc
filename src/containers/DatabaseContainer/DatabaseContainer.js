@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment as DateAdapter } from "@mui/x-date-pickers/AdapterMoment";
 import DataProvider from "../../Providers/Database"
+import Firebase from "../../Providers/Firebase"
 
 export default function ({ children }) {
     // const { appConfig } = useConfig();
@@ -14,9 +15,11 @@ export default function ({ children }) {
 
     return (
         <DataProvider>
-            <LocalizationProvider dateAdapter={DateAdapter}>
-                {children}
-            </LocalizationProvider>
+            <Firebase>
+                <LocalizationProvider dateAdapter={DateAdapter}>
+                    {children}
+                </LocalizationProvider>
+            </Firebase>
         </DataProvider>
     )
 }

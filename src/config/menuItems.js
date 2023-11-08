@@ -105,9 +105,9 @@ const getMenuItems = (props) => {
         {
           primaryText: <FilterPanel/>
         },
-        {
-          primaryText: <LegendPanel/>
-        }
+        // {
+        //   primaryText: <LegendPanel/>
+        // }
       ]
     },
     {

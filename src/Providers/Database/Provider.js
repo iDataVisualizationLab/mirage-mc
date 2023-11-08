@@ -2,6 +2,8 @@ import React, {useCallback, useEffect, useReducer} from 'react'
 import Context from './Context'
 import {groups as d3groups, sum as d3sum, mean as d3mean, csv as d3csv} from "d3"
 import {isArray, uniq} from 'lodash';
+import full_countries from './data/mirage-mc-v1.countries.json';
+import full_location from './data/mirage-mc-v1.locs.json';
 import axios from 'axios';
 
 const APIKey = process.env.REACT_APP_DATA_API;
@@ -38,6 +40,8 @@ const init = {fields: {value:{stationData:[],
             locationData:[]}},
     locs:{},
     countries:{},
+    locs_full: {value:full_location},
+    countries_full: {value:full_countries},
     events: {},
     loading:false,
     error:false,
@@ -82,13 +86,14 @@ const Provider = ({  children }) => {
                 console.timeEnd('-Load data-');
                 const byLocName={}
                 locationData.forEach(d => {
-                    d.lat = (+d.longitude);
-                    d.long = (+d.latitude);
+                    // d.lat = (+d.longitude);
+                    // d.long = (+d.latitude);
+                    d.long = (+d.longitude);
+                    d.lat = (+d.latitude);
                     delete d.longitude;
                     delete d.latitude;
                     byLocName[d['city_id']] = d;
                 });
-                debugger
                 const locs = _city.map(d => {
                     const locinfo = byLocName[d._id]??{};
                     return {
@@ -133,6 +138,7 @@ const Provider = ({  children }) => {
                 // Object.keys(fields).forEach(k=>fields[k].sort())
                 countries.sort((a, b) => b.count - a.count)
                 locs.sort((a, b) => b.count - a.count)
+
                 dispatch({type: 'VALUE_CHANGE', path: 'locs', value: locs, isLoading: false});
                 dispatch({type: 'VALUE_CHANGE', path: 'countries', value: countries, isLoading: false});
                 dispatch({type: 'VALUE_CHANGE', path: 'fields', value: fields, isLoading: false});
@@ -191,7 +197,7 @@ const Provider = ({  children }) => {
     );
     const searchByStream = (path,query)=>{
         dispatch({type: 'LOADING_CHANGED', path: `search-${path}`, isLoading: true});
-        return axios.get(`${APIUrl}/stream/search?${path}=${query}`).then(({data})=> {
+        return axios.post(`${APIUrl}/stream/search`,{[path]:query}).then(({data})=> {
             dispatch({type: 'VALUE_CHANGE', path: `search-${path}`, value: data.map(d=>d._id), isLoading: false});
         }).catch ((error)=> {
             dispatch({
@@ -236,8 +242,10 @@ const Provider = ({  children }) => {
                         Object.keys(data[k]).forEach(subk => subk !== '_id' ? (data[subk] = data[k][subk]) : null);
                         delete data[k];
                     });
-                    data.lat = data.longitude;
-                    data.long = data.latitude;
+                    // data.lat = data.longitude;
+                    // data.long = data.latitude;
+                    data.long = data.longitude;
+                    data.lat = data.latitude;
                     delete data.longitude;
                     delete data.latitude;
                     dispatch({type: 'VALUE_CHANGE', path: 'detail', value: data, isLoading: false});
@@ -276,8 +284,8 @@ const Provider = ({  children }) => {
             lat:locationDataMap[r['city_id']].lat,
             long:locationDataMap[r['city_id']].long,
             url:stationDataMap[r['station_id']].url,
-            // stream_song:streamDetail[r['stream_detail_id']].stream_song,
-            ...streamDetail[r['stream_detail_id']]
+            // track_name:streamDetail[r['event_id']].track_name,
+            ...streamDetail[r['event_id']]
         }
     }
     const getDownloadData = useCallback((listids)=>{

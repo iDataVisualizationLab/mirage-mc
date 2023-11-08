@@ -11,11 +11,11 @@ import {scaleLinear, scaleOrdinal, extent} from "d3";
 import {colorArr, TOP} from "../Earth";
 
 
-const countriesScale = scaleLinear().range([0.1,1]);
+// const countriesScale = scaleLinear().range([0.1,1]);
 
-export default function FilterPanel() {
+export default function FilterPanel({countries,fullHeight}) {
     const {getFuncCollection,getList} = useDatabase();
-    const countries = getList('countries');
+    // const countries = getList('countries');
     const countriesScale = useMemo(()=>{
         return scaleLinear().range([0.1,1]).domain(extent(countries, d => {
             return d?.count
@@ -37,13 +37,13 @@ export default function FilterPanel() {
             master.range = scale.range;
             return master;
         }();
-    },[]);
+    },[countries]);
 
     return <Grid >
             <Stack
                 m={1}
                 style={{
-                    maxHeight:'30vh',
+                    maxHeight:fullHeight?null:'30vh',
                     overflowY:'auto'
                 }}
             >

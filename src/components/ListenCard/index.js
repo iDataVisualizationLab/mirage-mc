@@ -39,49 +39,58 @@ function DetailCard({data, onSelect}) {
             <Grid container spacing={1}>
         <Grid item xs={6}>
             <Typography variant="h4" component="div"
-                        onClick={data.stream_song ? () => onSelect({stream_song: [data.stream_song]}) : null}>
-                {data.stream_song}
+                        onClick={data.track_name ? () => onSelect({track_name: [data.track_name]}) : null}>
+                {data.track_name}
             </Typography>
             {data.year_released && <Typography color="text.secondary" gutterBottom> {data.year_released}</Typography>}
-            {data.stream_song_genre && <Chip label={data.stream_song_genre} size={'small'}/>}
+            {data.track_name_genre && <Chip label={data.track_name_genre} size={'small'}/>}
         </Grid>
-        <Grid item>
-            <Box sx={{flex: '1 0 auto', display: 'flex'}}>
-                <Avatar aria-label="recipe"
-                        src={data.stream_artist_image_url}
-                        sx={{mr: 1}}>{data.stream_artist[0]}</Avatar>
-                <div>
-                    <Typography variant="h5" color={'text.primary'}>{data.stream_artist}</Typography>
-                    <Typography variant="subtitle2">from {data.stream_artist_country ?? "N/A"}</Typography>
-                </div>
-            </Box>
-            {data.stream_artist_genre && (data.stream_artist_genre.map(t => <Chip key={t} label={t} size={'small'}/>))}
-        </Grid>
+                {data.artist_info && <Grid item>
+                    <Box sx={{flex: '1 0 auto', display: 'flex'}}>
+                        <Avatar aria-label="recipe"
+                                src={data.artist_info.artist_image_url}
+                                sx={{mr: 1}}>{data.artist_info.artist_name[0]}</Avatar>
+                        <div>
+                            <Typography variant="h5" color={'text.primary'}>{data.artist_info.artist_name}</Typography>
+                            <Typography variant="subtitle2">from {data.artist_info.artist_country ?? "N/A"}</Typography>
+                        </div>
+                    </Box>
+                    {data.artist_info.artist_genres && (data.artist_info.artist_genres.map(t => <Chip key={t} label={t}
+                                                                                          size={'small'}/>))}
+                </Grid>}
             </Grid>
         </PaperCustom>
         <PaperCustom>
-        {(data.spotify_uri || data.youtube_url) && <Grid item xs={12}>
-            <Grid container>
-                <Divider sx={{mt: 2, mb: 2, flexGrow: 1}}/>
-                <Typography variant={"h5"} component={'div'} sx={{margin: 'auto'}}>Music Platform</Typography>
-                <Divider sx={{mt: 2, mb: 2, flexGrow: 1}}/>
-            </Grid>
+            <Grid item xs={12}>
+                <Grid container>
+                    <Divider sx={{mt: 2, mb: 2, flexGrow: 1}}/>
+                    <Typography variant={"h5"} component={'div'} sx={{margin: 'auto'}}>Music Platform</Typography>
+                    <Divider sx={{mt: 2, mb: 2, flexGrow: 1}}/>
+                </Grid>
+                <Grid item xs={12}>
+                    <iframe loading="lazy"
+                            src={`https://open.spotify.com/embed/track/${data.track_id}`}
+                            width={'100%'} height="80" frameBorder="0"
+                            data-mce-fragment="1"></iframe>
+                </Grid>
+        {(data.spotify_uri || data.track_YouTubeID) && <>
             {data.spotify_uri && <Grid item xs={12}>
                 <iframe loading="lazy"
                         src={data.spotify_uri.replace('com/track', 'com/embed/track')}
                         width={'100%'} height="80" frameBorder="0"
                         data-mce-fragment="1"></iframe>
             </Grid>}
-            {data.youtube_url && <Grid item xs={12}>
+            {data.track_YouTubeID && <Grid item xs={12}>
                 <iframe width={'100%'} height={'auto'}
                         loading="lazy"
-                        src={data.youtube_url.replace("youtube.com/watch?v=", "youtube-nocookie.com/embed/")}
+                        src={`https://www.youtube-nocookie.com/embed/${data.track_YouTubeID}`}
                         title="YouTube video player" frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowFullScreen
                 />
             </Grid>}
-        </Grid>}
+        </>}
+            </Grid>
         </PaperCustom>
     </Stack>
 

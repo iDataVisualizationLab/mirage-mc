@@ -39,8 +39,16 @@ import MediaDetail from "../../components/MediaDetail";
 import AppHeader from "../../components/AppHeader";
 import {actionCreators} from "../../reducer/actions/selectedList";
 import {fields, fieldsWithoutSelected} from "../../components/EventTable/fields";
+import SongListDetail from "../../components/SongListDetail";
+import {useLog} from "../../Providers/Firebase";
 
-
+function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+        width,
+        height
+    };
+}
 
 const LandingPage = () => {
     // const ResponsiveGridLayout = useMemo(()=>WidthProvider(Responsive),[]);
@@ -51,24 +59,28 @@ const LandingPage = () => {
     // const { appConfig } = useConfig()
     const {getList,isLoading,getEvents,requestEvents,requestDetail,getDetail,setFuncCollection} = useDatabase();
     const [zoomLoc,setZoomLoc] = useState();
+    const [isFullView,setIsFullView] = useState(true);
+    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
     const [layoutItems,setLayoutItems] = useState({
-        Earth:{key:"Earth View",val:true},
+        Earth:{key:"Earth View",val:true,disable:true},
         eventList:{key:"Song List",val:true},
         eventDetail:{key:"Song Details",val:true},
         eventMap:{key:"Song List Map",val:true},
         mediaDetail:{key:"Listen",val:true},
-        eventSelectedList:{key:"Selected Songs",val:false},
-        eventSelectedListDetail:{key:"Song List Details",val:false},
+        eventSelectedList:{key:"Selected Songs",val:true},
+        eventListDetail:{key:"Song List Details",val:true},
     });
     const toolbarRef = useRef(null);
     const layoutRef = useRef(null);
     const currentDetail = getDetail();
     const eventTotalData = useSelector(state => state.seletedList.currentList);
     const eventSelectedData = useSelector(state => Array.from(state.seletedList.items.values( ) ));
+    const {setlocation} = useLog();
     const query = useQuery();
     useEffect(()=>{
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position)=>{
+                setlocation(position.coords)
                 setZoomLoc({lng:position.coords.longitude,lat:position.coords.latitude})
             }, ()=>{});
         }
@@ -146,7 +158,7 @@ const LandingPage = () => {
             {
                 "type": "border",
                 "location":"left",
-                "size": 500,
+                "size": windowDimensions.width*0.4,
                 "children": [
                     {
                         "type": "tab",
@@ -172,7 +184,13 @@ const LandingPage = () => {
                                     type: "tab",
                                     name: "Song List",
                                     component: "eventList",
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            type: "tabset",
+                            weight: 50,
+                            children: [
                                 {
                                     type: "tab",
                                     name: "Selected Songs",
@@ -186,16 +204,21 @@ const LandingPage = () => {
                             children: [
                                 {
                                     type: "tab",
-                                    name: "Song List Map",
-                                    component: "eventMap",
-                                },{
-                                    type: "tab",
                                     name: "Song Detail",
                                     component: "eventDetail",
                                 },{
                                     type: "tab",
                                     name: "Listen",
                                     component: "mediaDetail",
+                                },{
+                                    type: "tab",
+                                    name: "Song List Map",
+                                    component: "eventMap",
+                                },
+                                {
+                                    type: "tab",
+                                    name: "Song List Detail",
+                                    component: "eventListDetail",
                                 }
                             ]
                         }
@@ -209,6 +232,11 @@ const LandingPage = () => {
         dispatch(actionCreators.newList(getEvents()));
     },[getEvents()])
 
+    const getSwitchView = useCallback((newval)=>{
+        if (newval!==undefined)
+            setIsFullView(newval);
+        return isFullView;
+    },[isFullView])
     const factory = (node) => {
         let component = node.getComponent();
         switch (component){
@@ -225,6 +253,8 @@ const LandingPage = () => {
                                    onRemoveFromList={(l)=>dispatch(actionCreators.removeItems(l))}
                                    // onTogleWin={()=>onTogleWin("eventList")}
                 />;
+            case 'eventListDetail':
+                return <SongListDetail countries={isFullView?getList('countries_full'):getList('countries')}/>;
             case 'eventSelectedList':
                 return <EventTable id='eventSelectedListTable'
                                    data={eventSelectedData}
@@ -262,13 +292,14 @@ const LandingPage = () => {
             case 'Earth':
                 return <AutoSizer style={{ height: '100%', width: '100%' }} >
                     {({ height, width }) => {
-                        return <Earth3D locs={getList('locs')}
-                                        countries={getList('countries')}
+                        return <Earth3D locs={isFullView?getList('locs_full'):getList('locs')}
+                                        countries={isFullView?getList('countries_full'):getList('countries')}
                                         onSelect={onSelect}
                                         onSelectLegend={setFuncCollection}
                                         width={width} height={height}
                                         toolbarRef={toolbarRef}
                                         zoomLoc={zoomLoc}
+                                        getSwitchView={getSwitchView}
                         />
                     }}
                 </AutoSizer>
@@ -343,6 +374,7 @@ const LandingPage = () => {
             <FlexLayout.Layout model={layouts}
                                ref={layoutRef}
                                factory={factory}
+                               tabEnableRenderOnDemand={false}
                                // onRenderTabSet={onRenderTabSet}
                                popoutURL="#/popout"
                                realtimeResize={false}

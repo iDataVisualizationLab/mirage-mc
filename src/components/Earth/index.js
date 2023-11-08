@@ -4,7 +4,17 @@ import earthDay from '../../assets/earth-blue-marble.jpg'
 import Globe from 'react-globe.gl'
 import * as d3 from 'd3'
 import './index.css'
-import {Button, ButtonGroup, Card, CardContent, IconButton, Portal, Stack, Typography} from "@mui/material";
+import {
+    Button,
+    ButtonGroup,
+    Card,
+    CardContent,
+    IconButton,
+    Portal,
+    Stack,
+    ToggleButton,
+    Typography
+} from "@mui/material";
 import {semicolor} from "../../containers/LayoutContainer/theme";
 import SaveIcon from '@mui/icons-material/Save';
 import exportAsImage from "./htm2image";
@@ -24,7 +34,7 @@ const countriesScale = d3.scaleLinear().range([0.1,1]);
 
 
 
-const Earth3D = forwardRef(({locs,countries,width,height,onSelect,onSelectLegend, zoomLoc, toolbarRef} , ref) => {
+const Earth3D = forwardRef(({locs,countries,width,height,onSelect,onSelectLegend,getSwitchView, zoomLoc, toolbarRef} , ref) => {
     const globeEl = useRef();
     const holderRef = useRef();
     const [colorKey, setColorKey] = useState('country');
@@ -53,6 +63,7 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect,onSelectLegend
     },[]);
 
     function handleData({locs,countries}) {
+        console.log(locs,countries)
         const contriesMap = {};
         const range = d3.extent(locs, d => d?.count);
         
@@ -115,7 +126,7 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect,onSelectLegend
     const zoomTo = useCallback((lng,lat)=>{
         if (globeEl.current) {
             stopPlay();
-            globeEl.current.pointOfView({ lat, lng, altitude: 1.2 }, 2000);
+            globeEl.current.pointOfView({ lat, lng, altitude:2 }, 2000);
             setRingData([{lng,lat}]);
             if (timerRing)
                 clearInterval(timerRing);
@@ -240,24 +251,37 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect,onSelectLegend
         {/*{toolbarRef&&<Portal container={toolbarRef.current}>*/}
         {/*    <IconButton onClick={onSaveImage}><SaveIcon/></IconButton>*/}
         {/*</Portal>}*/}
-        <ButtonGroup
-            orientation="vertical"
-            aria-label="map tool"
-            variant={"contained"}
-            sx={{position:'absolute',right:0,top:0,margin:1,
-                // backgroundColor: theme=>alpha(theme.palette.common.white, 0.15),
-                '& button':{
-                    padding:1,
-                    // '&:hover': {
-                    //     backgroundColor: theme=>alpha(theme.palette.common.white, 0.25),
-                    // }
-            }}}
-        >
+        <Stack sx={{position:'absolute',right:0,top:0,margin:1}} direction={"row"}>
+            <div><ToggleButton
+                value="check"
+                selected={getSwitchView()}
+                onChange={() => {
+                    const current = getSwitchView();
+                    getSwitchView(!current);
+                }}
+            >
+                {getSwitchView()?'Full data':'Demo data'}
+            </ToggleButton>
+            </div>
+            <ButtonGroup
+                orientation="vertical"
+                aria-label="map tool"
+                variant={"contained"}
+                sx={{
+                    // backgroundColor: theme=>alpha(theme.palette.common.white, 0.15),
+                    '& button':{
+                        padding:1,
+                        // '&:hover': {
+                        //     backgroundColor: theme=>alpha(theme.palette.common.white, 0.25),
+                        // }
+                }}}
+            >
 
-            <Button onClick={onSaveImage}><SaveIcon/></Button>
-            <Button onClick={zoomIn}><AddIcon/></Button>
-            <Button onClick={zoomOut}><RemoveIcon/></Button>
-        </ButtonGroup>
+                <Button onClick={onSaveImage}><SaveIcon/></Button>
+                <Button onClick={zoomIn}><AddIcon/></Button>
+                <Button onClick={zoomOut}><RemoveIcon/></Button>
+            </ButtonGroup>
+        </Stack>
     </div>;
 })
 

@@ -44,9 +44,11 @@ function DetailCard ({data,onSelect}){
             </Typography>
             <table style={{width:'100%'}}>
                 <colgroup><col style={{width:130}}/><col/></colgroup>
-                <tr><td>Station URL</td><td><Link href={data.station_url} target={'_blank'} color={'secondary'}>{data.station_url}</Link></td></tr>
-                <tr><td>Location</td><td><Link target={'_blank'} color={'secondary'} href={`https://maps.google.com/?q=${data.lat},${data.long}`}><MapIcon/>{data.city}, {data.country}</Link></td></tr>
-                <tr><td>Radio Garden URL</td><td><Link href={data.url} target={'_blank'} color={'secondary'}>{data.url}</Link></td></tr>
+                <tbody>
+                    <tr><td>Station URL</td><td><Link href={data.station_url} target={'_blank'} color={'secondary'}>{data.station_url}</Link></td></tr>
+                    <tr><td>Location</td><td><Link target={'_blank'} color={'secondary'} href={`https://maps.google.com/?q=${data.lat},${data.long}`}><MapIcon/>{data.city}, {data.country}</Link></td></tr>
+                    <tr><td>Radio Garden URL</td><td><Link href={data.url} target={'_blank'} color={'secondary'}>{data.url}</Link></td></tr>
+                </tbody>
             </table>
             {/*<table style={{width:'100%'}}>*/}
             {/*    <colgroup><col style={{width:130}}/><col/></colgroup>*/}
@@ -83,31 +85,31 @@ function DetailCard ({data,onSelect}){
                         <Chip label={data.stream_genre} size={'small'}/></Stack>}
                 </CardContent>
             </CollapsibleComp>}
-            {/*<CollapsibleComp header={'Event'} banner={<>"{data.stream_song}" by "{data.stream_artist}" at {timeStation}</>}>*/}
-            <CollapsibleComp header={'Event'} banner={<>"{data.stream_song}" at {timeStation}</>}>
+            {/*<CollapsibleComp header={'Event'} banner={<>"{data.track_name}" by "{data.artist_name}" at {timeStation}</>}>*/}
+            <CollapsibleComp header={'Event'} banner={<>"{data.track_name}" at {timeStation}</>}>
                 <CardContent>
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
                                 <Typography color="text.secondary" gutterBottom> {timeStation}</Typography>
                         </Grid>
                         <Grid item flexGrow={1}>
-                            <Typography variant="h4" component="div" onClick={data.stream_song?()=>onSelect({stream_song:[data.stream_song]}):null}>
-                                {data.stream_song}
+                            <Typography variant="h4" component="div" onClick={data.track_name?()=>onSelect({track_name:[data.track_name]}):null}>
+                                {data.track_name}
                             </Typography>
                             {data.year_released&&<Typography color="text.secondary" gutterBottom> {data.year_released}</Typography>}
-                            {data.stream_song_genre&&<Chip label={data.stream_song_genre} size={'small'}/>}
+                            {data.track_name_genre&&<Chip label={data.track_name_genre} size={'small'}/>}
                         </Grid>
                         <Grid item>
                             <Box sx={{ flex: '1 0 auto', display:'flex' }}>
                                 <Avatar aria-label="recipe"
-                                        src={data.stream_artist_image_url}
-                                        sx={{mr: 1}}>{data.stream_artist[0]}</Avatar>
+                                        src={data.artist_name_image_url}
+                                        sx={{mr: 1}}>{data.artist_name[0]}</Avatar>
                                 <div>
-                                    <Typography variant="h5" color={'text.primary'}>{data.stream_artist}</Typography>
-                                    <Typography variant="subtitle2">from {data.stream_artist_country??"N/A"}</Typography>
+                                    <Typography variant="h5" color={'text.primary'}>{data.artist_name}</Typography>
+                                    <Typography variant="subtitle2">from {data.artist_name_country??"N/A"}</Typography>
                                 </div>
                             </Box>
-                            {data.stream_artist_genre&&(data.stream_artist_genre.map(t=><Chip key={t} label={t} size={'small'}/>))}
+                            {data.artist_name_genre&&(data.artist_name_genre.map(t=><Chip key={t} label={t} size={'small'}/>))}
                         </Grid>
                         <Grid item xs={12}>
                             {data.stream_instrument_list&&(<Stack direction={'row'} spacing={1} flexWrap sx={{width:'100%', flexWrap:'wrap'}}>
@@ -126,18 +128,18 @@ function DetailCard ({data,onSelect}){
                             </Grid>
                             {data.stream_lyrics}
                             {/*<table style={{width:'100%'}}>*/}
-                            {/*    {data.stream_artist&&<tr onClick={() => onSelect({stream_artist: [data.stream_artist]})}>*/}
+                            {/*    {data.artist_name&&<tr onClick={() => onSelect({artist_name: [data.artist_name]})}>*/}
                             {/*        <td>Artist</td>*/}
                             {/*        <td style={{display: 'flex'}}><Avatar aria-label="recipe"*/}
-                            {/*                                              src={data.stream_artist_image_url}*/}
-                            {/*                                              sx={{mr: 1}}>{data.stream_artist[0]}</Avatar>*/}
+                            {/*                                              src={data.artist_name_image_url}*/}
+                            {/*                                              sx={{mr: 1}}>{data.artist_name[0]}</Avatar>*/}
                             {/*            <div>*/}
-                            {/*                <Typography variant="h5" color={'text.primary'}>{data.stream_artist}</Typography>*/}
+                            {/*                <Typography variant="h5" color={'text.primary'}>{data.artist_name}</Typography>*/}
                             {/*                <Typography variant="subtitle2">N/A</Typography>*/}
                             {/*            </div>*/}
                             {/*        </td>*/}
                             {/*    </tr>}*/}
-                            {/*    <tr onClick={data.stream_song?()=>onSelect({stream_song:[data.stream_song]}):null}><td>Song</td><td>{data.stream_song}</td></tr>*/}
+                            {/*    <tr onClick={data.track_name?()=>onSelect({track_name:[data.track_name]}):null}><td>Song</td><td>{data.track_name}</td></tr>*/}
                             {/*    <tr><td>Time Monitored</td><td>{timeStation}</td></tr>*/}
                             {/*</table>*/}
                         </Grid>}

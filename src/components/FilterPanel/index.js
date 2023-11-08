@@ -10,6 +10,7 @@ import {Autocomplete, createFilterOptions, Stack, TextField} from "@mui/material
 import {filterSearch} from "../EventTable/fields";
 import {useDatabase} from "../../Providers/Database";
 import ListboxComponent from "../ListboxComponent";
+import {useLog} from "../../Providers/Firebase";
 
 const OPTIONS_LIMIT = 50;
 const defaultFilterOptions = createFilterOptions();
@@ -25,7 +26,7 @@ export default function FilterPanel() {
     const [filterOptions,setFilterOptions] = useState({});
     const {isLoading,searchByStream,getList} = useDatabase();
 
-
+    const {logEvents} = useLog();
     // useEffect(()=>{
     //     if (!Object.keys(filters).length) {
     //         // const newfilters = {};
@@ -56,6 +57,8 @@ export default function FilterPanel() {
             getOptionLabel={(d) => d}
             value={filters[f.accessorKey]??[]}
             onChange={(event, value) => {
+                if (value!=='' && value && value.length)
+                    logEvents('search',{'search_term':value,key:f.accessorKey,})
                 dispatch(setFilter({key:f.accessorKey,value}));
             }}
             onInputChange={f.dynamic?((event, newInputValue) => {

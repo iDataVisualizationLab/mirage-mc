@@ -1,6 +1,6 @@
 import Plot from 'react-plotly.js';
 import {useTheme} from "@mui/material/styles";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {color as d3color, extent, scaleLinear, range as d3range,interpolateNumber} from 'd3';
 import './index.css';
 
@@ -105,7 +105,7 @@ export default function  Map ({locs,height,width,highlight}) {
         }
     },[locs,highlight])
 // console.log(domain.center,domain.zoom)
-    let layout = {
+    let layout = useMemo(()=>({
         paper_bgcolor: theme.palette.background.paper,
         plot_bgcolor:'rgba(0,0,0,0)',//theme.palette.background.paper,
         autoscale: false,
@@ -133,7 +133,7 @@ export default function  Map ({locs,height,width,highlight}) {
             y: 0,
             orientation: 'h'
         }
-    };
+    }),[height,width,theme,domain]);
     return (
         <Plot
             data={data}

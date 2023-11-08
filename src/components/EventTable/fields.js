@@ -11,11 +11,15 @@ export const fields = [
         Cell: ({ renderedCellValue, row }) => (
             <Checkbox
                 disabled
+                size={"small"}
                 icon={<EventOutIcon />}
                 checkedIcon={<EventIcon color={'secondary'}/>}
                 checked={row.original.inBasket}
             />
         ),
+        size: 50,
+        minSize: 50,
+        filterDisable:true,
     },
     {
         accessorKey: 'city',
@@ -28,18 +32,22 @@ export const fields = [
     {
         accessorKey: 'station',
         header: 'Station',
+        filterDisable:true
     },
     {
         accessorKey: 'station_genre',
         header: 'Station Genre',
+        Cell: ({ renderedCellValue, row }) => (
+            <>{(renderedCellValue??[]).join(', ')}</>
+        ),
     },
     {
-        accessorKey: 'stream_artist',
+        accessorKey: 'artist_name',
         header: 'Artist',
         dynamic:true,
     },
     {
-        accessorKey: 'stream_song',
+        accessorKey: 'track_name',
         header: 'Song',
         dynamic:true,
     }

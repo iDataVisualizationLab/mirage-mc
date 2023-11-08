@@ -25,13 +25,14 @@ export default function () {
             paddingRight:theme.spacing(1),
         [theme.breakpoints.up('sm')]: {
             marginLeft: theme.spacing(1),
+            minWidth: 250,
             width: 'auto',
         }})}
         startIcon={<SearchIcon/>}
         variant={"contained"}
         onClick={()=>setIsOpen(true)}
     >
-        <Typography variant={"span"}>Search...</Typography>
+        <Typography variant={"subtitle1"} >Search...</Typography>
         {/*<SearchIconWrapper>*/}
         {/*    <SearchIcon />*/}
         {/*</SearchIconWrapper>*/}
