@@ -75,7 +75,7 @@ const LandingPage = () => {
     const currentDetail = getDetail();
     const eventTotalData = useSelector(state => state.seletedList.currentList);
     const eventSelectedData = useSelector(state => Array.from(state.seletedList.items.values( ) ));
-    const {setlocation} = useLog();
+    const {setlocation, logEvents} = useLog();
     const query = useQuery();
     useEffect(()=>{
         if (navigator.geolocation) {
@@ -109,6 +109,9 @@ const LandingPage = () => {
     const onSelect = useCallback((value,extra)=>{
         if (extra)
             setZoomLoc({lng:extra.long,lat:extra.lat})
+        if (Object.keys(value)[0]) {
+            logEvents('click_earth', {...value})
+        }
         dispatch(setFilters({value}));
     },[]);
 
