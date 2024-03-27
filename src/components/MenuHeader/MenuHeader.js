@@ -45,7 +45,6 @@ const MenuHeader = () => {
             ...theme.mixins.toolbar,
         },
     }
-
     return (
         <Paper
             square={true}
@@ -70,6 +69,7 @@ const MenuHeader = () => {
                         <ListItemSecondaryAction>
                             <img
                                 src={require('../../assets/logo.png')} loading="lazy" style={{height:'auto',width:100, transform:'translateY(30%)'}}></img>
+                            <span>{process.env.npm_package_version}</span>
                             <IconButton
                                 onClick={() => {
                                     toggleThisTheme('isDarkMode')

@@ -38,6 +38,7 @@ export default function ({layoutItems,layoutItemsOnChange=()=>{}}){
     };
     return <>
         <img src={require('../../assets/logo.png')} loading="lazy" style={{height:'auto',width:150}}></img>
+        <span>{process.env.REACT_APP_VERSION}</span>
         <IconButton title={"About us"} size={"small"} sx={{transform:"translate(-10px,10px)"}}
         onClick={()=>dispatch({ type: SET_MENU, opened: true })}>
             <HelpIcon fontSize="inherit"/>
