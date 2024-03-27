@@ -7,10 +7,12 @@ import {
 } from "../../reducer/streamfilters";
 import { ActionCreators } from "redux-undo";
 import {Autocomplete, createFilterOptions, Stack, TextField} from "@mui/material";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import {filterSearch} from "../EventTable/fields";
 import {useDatabase} from "../../Providers/Database";
 import ListboxComponent from "../ListboxComponent";
 import {useLog} from "../../Providers/Firebase";
+import SelectionWithOption from "./SelectionWithOption";
 
 const OPTIONS_LIMIT = 50;
 const defaultFilterOptions = createFilterOptions();
@@ -25,6 +27,7 @@ export default function FilterPanel() {
     const dispatch = useDispatch();
     const [filterOptions,setFilterOptions] = useState({});
     const {isLoading,searchByStream,getList} = useDatabase();
+    const [categoryOption,setCategoryOption] = useState({});
 
     const {logEvents} = useLog();
     // useEffect(()=>{
@@ -44,6 +47,7 @@ export default function FilterPanel() {
     },[fields])
 
     return <Stack spacing={2} padding={2}>
+        <SelectionWithOption/>
         {filterSearch.map(f=><CusAutocomplete
             key={f.accessorKey}
             multiple
