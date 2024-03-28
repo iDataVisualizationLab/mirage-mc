@@ -179,25 +179,29 @@ const LandingPage = () => {
             children: [
                 {"type": "row",
                     children: [
-                        {
-                            type: "tabset",
-                            weight: 50,
+                        {"type": "row",
                             children: [
                                 {
-                                    type: "tab",
-                                    name: "Song List",
-                                    component: "eventList",
-                                }
-                            ]
-                        },
-                        {
-                            type: "tabset",
-                            weight: 50,
-                            children: [
+                                    type: "tabset",
+                                    weight: 50,
+                                    children: [
+                                        {
+                                            type: "tab",
+                                            name: "Song List",
+                                            component: "eventList",
+                                        }
+                                    ]
+                                },
                                 {
-                                    type: "tab",
-                                    name: "Selected Songs",
-                                    component: "eventSelectedList",
+                                    type: "tabset",
+                                    weight: 50,
+                                    children: [
+                                        {
+                                            type: "tab",
+                                            name: "Selected Songs",
+                                            component: "eventSelectedList",
+                                        }
+                                    ]
                                 }
                             ]
                         },
@@ -225,7 +229,7 @@ const LandingPage = () => {
                                 }
                             ]
                         }
-                        ]
+                    ]
                 }
             ]
         }

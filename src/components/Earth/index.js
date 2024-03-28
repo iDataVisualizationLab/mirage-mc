@@ -260,7 +260,7 @@ const Earth3D = forwardRef(({locs,countries,width,height,onSelect,onSelectLegend
                     getSwitchView(!current);
                 }}
             >
-                {getSwitchView()?'Full data':'Demo data'}
+                {getSwitchView()?'All Data':'Reviewed Data'}
             </ToggleButton>
             </div>
             <ButtonGroup
