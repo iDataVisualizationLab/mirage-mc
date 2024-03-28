@@ -1,5 +1,6 @@
-import React from "react";
-import {Stack, MenuItem, Select,FormControl, TextField} from "@mui/material";
+import React, { useEffect } from "react";
+import {Stack, MenuItem, Select,FormControl, TextField, IconButton} from "@mui/material";
+import CancelIcon from '@mui/icons-material/Cancel';
 import CusAutocomplete from "./CusAutocomplete";
 import ListboxComponent from "../ListboxComponent";
 import { useSelector, useDispatch } from "react-redux";
@@ -15,23 +16,37 @@ const emptyFunc = ()=>{};
 export default function SelectionWithOption({options=emptyArray,
     enabled=emptyObj, onChangeCat=emptyFunc, filterOptionsFunc,
     order=0,
+    cat='',
     filterOptions,searchByStream,
     getList, isLoading, logEvents}) {
-    const [cat, setCat] = React.useState('');
     const [f, setF] = React.useState({});
     const dispatch = useDispatch();
     const filters = useSelector(selectFilters);
 
+    useEffect(()=>{
+        if (cat!=='')
+            setF(options.find(d=>d.accessorKey===cat));
+    },[cat])
+
     const handleChange = (event) => {
-        onChangeCat(cat,event.target.value);
-        setF(options.find(d=>d.accessorKey===event.target.value));
-        setCat(event.target.value);
+        onChangeCat(cat,event.target.value,order);
+        // setF(options.find(d=>d.accessorKey===event.target.value));
         // reset filter 
-        dispatch(setFilter({key:cat,value:[]}));
+        if (cat!=="")
+            dispatch(setFilter({key:cat,value:[]}));
     };
+
+    const onDelete = () =>{
+        debugger
+        // have something to filter
+        if (filters[f.accessorKey]&& filters[f.accessorKey].length){
+            dispatch(setFilter({key:cat,value:[]}));
+        }
+        onChangeCat(cat,'',order); // delete
+    }
     return <React.Fragment>
     <Stack direction={"row"}>
-    <FormControl sx={{ m: 1, minWidth: 120 }}>
+    <FormControl sx={{ minWidth: 120 }}>
         <Select
           value={cat}
           onChange={handleChange}
@@ -44,6 +59,7 @@ export default function SelectionWithOption({options=emptyArray,
         </Select>
       </FormControl>
       <CusAutocomplete
+            fullWidth
             key={f.accessorKey}
             multiple
             size="small"
@@ -71,6 +87,9 @@ export default function SelectionWithOption({options=emptyArray,
                 />
             )}
         />
+        <IconButton aria-label="close" size="small" onClick={onDelete}>
+            <CancelIcon fontSize="inherit" />
+        </IconButton>
     </Stack>
     </React.Fragment>
 }

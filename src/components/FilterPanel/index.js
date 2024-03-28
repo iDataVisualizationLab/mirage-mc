@@ -45,19 +45,26 @@ export default function FilterPanel() {
     useEffect(()=>{
         setFilterOptions({...fields});
     },[fields])
-    const onChangeCat = useCallback((pre,v,i)=>{
-        if (pre!=='')
+    const onChangeCat = useCallback((pre,v,order)=>{
+        if (v!==''){
+            if (pre!=='')
+                delete categoryOption[pre];
+            categoryOption[v] = true;
+            categoryOptionList[order] = v;
+            setCategoryOption(categoryOption);
+            setHasEmpty(categoryOptionList.find(d=>d==='')?true:false);
+            setCategoryOptionList(categoryOptionList);
+        }else{
             delete categoryOption[pre];
-        categoryOption[v] = true;
-        setCategoryOption(categoryOption);
-        categoryOptionList[i] = v;
-        setHasEmpty(categoryOptionList.find(d=>d==='')?true:false);
-        setCategoryOptionList(categoryOptionList)
+            setCategoryOptionList(categoryOptionList.filter((d,i)=>i!==order));
+            setCategoryOption(categoryOption);
+        }
     },[filterSearch,categoryOptionList,categoryOption]);
     return <Stack spacing={2} padding={2}>
         {categoryOptionList.map((d,i)=><SelectionWithOption 
             key={i}
             order={i}
+            cat={d}
             options={filterSearch} 
             enabled={categoryOption}
             onChangeCat={onChangeCat}
