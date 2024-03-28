@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
     setFilter,
@@ -6,11 +6,9 @@ import {
     selectFilters
 } from "../../reducer/streamfilters";
 import { ActionCreators } from "redux-undo";
-import {Autocomplete, createFilterOptions, Stack, TextField} from "@mui/material";
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import {Button, createFilterOptions, Stack, TextField} from "@mui/material";
 import {filterSearch} from "../EventTable/fields";
 import {useDatabase} from "../../Providers/Database";
-import ListboxComponent from "../ListboxComponent";
 import {useLog} from "../../Providers/Firebase";
 import SelectionWithOption from "./SelectionWithOption";
 
@@ -28,6 +26,8 @@ export default function FilterPanel() {
     const [filterOptions,setFilterOptions] = useState({});
     const {isLoading,searchByStream,getList} = useDatabase();
     const [categoryOption,setCategoryOption] = useState({});
+    const [categoryOptionList,setCategoryOptionList] = useState(['']);
+    const [hasEmpty,setHasEmpty] = useState(true);
 
     const {logEvents} = useLog();
     // useEffect(()=>{
@@ -45,10 +45,41 @@ export default function FilterPanel() {
     useEffect(()=>{
         setFilterOptions({...fields});
     },[fields])
-
+    const onChangeCat = useCallback((pre,v,i)=>{
+        if (pre!=='')
+            delete categoryOption[pre];
+        categoryOption[v] = true;
+        setCategoryOption(categoryOption);
+        categoryOptionList[i] = v;
+        setHasEmpty(categoryOptionList.find(d=>d==='')?true:false);
+        setCategoryOptionList(categoryOptionList)
+    },[filterSearch,categoryOptionList,categoryOption]);
     return <Stack spacing={2} padding={2}>
-        <SelectionWithOption/>
-        {filterSearch.map(f=><CusAutocomplete
+        {categoryOptionList.map((d,i)=><SelectionWithOption 
+            key={i}
+            order={i}
+            options={filterSearch} 
+            enabled={categoryOption}
+            onChangeCat={onChangeCat}
+            getList={getList}
+            filterOptionsFunc={filterOptionsFunc}
+            filterOptions={filterOptions}
+            isLoading={isLoading}
+            logEvents={logEvents}
+            searchByStream={searchByStream}
+        />)}
+        {(categoryOptionList.length<filterSearch.length)&&<Button 
+            variant="contained"
+            disabled={hasEmpty}
+            onClick={()=>{
+                setHasEmpty(true);
+                categoryOptionList.push('');
+                setCategoryOptionList(categoryOptionList)
+            }}
+        >
+            Add filter
+        </Button>}
+        {/* {filterSearch.map(f=><CusAutocomplete
             key={f.accessorKey}
             multiple
             size="small"
@@ -75,7 +106,7 @@ export default function FilterPanel() {
                     label={f.header}
                 />
             )}
-        />)}
+        />)} */}
         {/*<TimeRangePicker*/}
         {/*    fromVal={(filters["time_station"]?.from)??null}*/}
         {/*    toVal={(filters["time_station"]?.to)??null}*/}
@@ -89,17 +120,4 @@ export default function FilterPanel() {
         {/*    }}*/}
         {/*/>*/}
     </Stack>
-}
-
-function CusAutocomplete ({onInputChange=()=>{},...props}) {
-    const [input, setInput] = React.useState('');
-    return <Autocomplete
-        inputValue={input}
-        onInputChange={(event,newValue,reason)=> {
-            setInput(newValue);
-            onInputChange(event,newValue,reason)
-        }}
-        onBlur={()=>{setInput('')}}
-        {...props}
-    />
 }
